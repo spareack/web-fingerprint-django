@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-is=2mdx6=u!(24ticz&18v3t@r+@jzjr@gmg^hzp82jo$b*@_4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['dumka2.pythonanywhere.com']
+ALLOWED_HOSTS = ['dumka2.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
