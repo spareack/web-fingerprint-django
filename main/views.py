@@ -12,9 +12,6 @@ def get_location_data(ip_address):
 
 
 def get_ip_address(data):
-
-    return data.get('HTTP_X_REAL_IP')
-
     headers_list = 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', \
                    'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'
 
@@ -30,7 +27,7 @@ class HomeView(View):
         params = {key: request.META.get(key) for key in request.META if key != 'wsgi.file_wrapper'}
 
         ip_address = get_ip_address(request.META)
-        location_data = get_location_data(request.META.get(ip_address))
+        location_data = get_location_data(ip_address)
 
         context = {'params': params, 'location_data': location_data}
 
