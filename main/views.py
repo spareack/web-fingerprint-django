@@ -31,7 +31,7 @@ class HomeView(View):
     template_name = 'main/index.html'
 
     def get(self, request):
-        params = {key: request.META.get(key) for key in request.META if not key.startwith('wsgi.')}
+        params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
         ip_address = get_ip_address(request.META)
         location_data = get_location_data(ip_address)
