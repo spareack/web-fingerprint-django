@@ -4,11 +4,25 @@
     <meta charset="UTF-8">
     <title>???</title>
 </head>
-<body>
+<body style="margin-left: 500px;">
 
 {% for key, value in params.items %}
-<p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
+    <p style="font-size: 14px; line-height: 10px;"><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
 {% endfor %}
+
+
+<script>
+  const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3')
+    .then(FingerprintJS => FingerprintJS.load())
+
+  fpPromise
+    .then(fp => fp.get())
+    .then(result => {
+      // This is the visitor identifier:
+      const visitorId = result.visitorId
+      console.log(visitorId)
+    })
+</script>
 
 </body>
 </html>

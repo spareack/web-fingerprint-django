@@ -8,7 +8,7 @@ class HomeView(View):
     template_name = 'main/index.html'
 
     def get(self, request):
-        params = {key: request.META.get(key) for key in request.META}
+        params = {key: request.META.get(key) for key in request.META if key != 'wsgi.file_wrapper'}
         context = {'params': params}
 
         print(params)
