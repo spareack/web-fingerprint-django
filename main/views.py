@@ -7,10 +7,7 @@ import requests
 
 
 def get_location_data(ip_address):
-
-    response = requests.get(f'https://ipinfo.io/widget/demo/{ip_address}?dataset=geolocation').json()
-    # response = requests.get(f'https://ipinfo.io/widget/demo/{ip_address}').json()
-    # response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+    response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
     return response
 
 
