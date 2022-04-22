@@ -84,6 +84,12 @@
     })
 </script>
 
+<script>
+  var d = new Date();
+  var tz = d.toString().split("GMT")[1].split(" (")[0];
+  alert(tz == {{ ip_timezone }});
+</script>
+
 
 <style>
   .separate-line {
