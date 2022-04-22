@@ -10,9 +10,12 @@
 
 
 <div class="container" style="margin-top: 50px">
-    <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 100px;"></span>
+    <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 200px;"></span>
     <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
     <b>Canvas Fingerprint:&nbsp;</b> <span id='canvas-hash' style="margin-right: 100px;"></span>
+
+    <b>Server Timezone::&nbsp;</b> <span id='server-time'></span>
+    <b>System Timezone::&nbsp;</b> <span> {{ id_timezone }} </span>
 
     <div class="separate-line"></div>
 
@@ -84,10 +87,11 @@
     })
 </script>
 
+<!-- system time -->
 <script>
   var d = new Date();
   var tz = d.toString().split("GMT")[1].split(" (")[0];
-  alert(tz == {{ ip_timezone }});
+  document.getElementById('server-time').textContent = tz;
 </script>
 
 
