@@ -14,8 +14,8 @@
     <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
     <b>Canvas Fingerprint:&nbsp;</b> <span id='canvas-hash' style="margin-right: 100px;"></span>
 
-    <b>Server Timezone::&nbsp;</b> <span id='server-time'></span>
-    <b>System Timezone::&nbsp;</b> <span> {{ id_timezone }} </span>
+    <b>Server Timezone:&nbsp;</b> <span id='server-time'></span>
+    <b>System Timezone:&nbsp;</b> <span> {{ id_timezone }} </span>
 
     <div class="separate-line"></div>
 
@@ -89,8 +89,9 @@
 
 <!-- system time -->
 <script>
-  var d = new Date();
-  var tz = d.toString().split("GMT")[1].split(" (")[0];
+  var gmtRe = /GMT([\-\+]?\d{4})/;
+  var d = new Date().toString();
+  var tz = gmtRe.exec(d)[1];
   document.getElementById('server-time').textContent = tz;
 </script>
 
