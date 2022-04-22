@@ -92,7 +92,7 @@
   var gmtRe = /GMT([\-\+]?\d{4})/;
   var d = new Date().toString();
   var tz = gmtRe.exec(d)[1];
-  document.getElementById('server-time').textContent = tz;
+  document.getElementById('server-time').textContent = d;
 </script>
 
 
