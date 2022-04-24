@@ -49,7 +49,9 @@ class HomeView(View):
     template_name = 'main/index.html'
 
     def get(self, request):
-        print(get_token(request))
+        # print(get_token(request))
+
+        print(request.p0f)
 
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
@@ -74,6 +76,6 @@ class HomeView(View):
 # @csrf_protect
 def set_secret_data(request):
     json_data = json.loads(request.body)
-    print(get_token(request))
-    print(json_data)
+    # print(get_token(request))
+    # print(json_data)
     return HttpResponse(5)

@@ -37,7 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main'
+    'main',
+]
+
+P0FSOCKET = "path/to/p0f_unix_socket"
+
+MIDDLEWARE_CLASSES = [
+    'p0f.django.middleware.P0fMiddleware'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'fingerprint.urls'
 
@@ -69,7 +77,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'fingerprint.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
