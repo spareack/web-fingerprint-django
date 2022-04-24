@@ -44,6 +44,11 @@ def parse_user_agent(user_agent):
     return str(user_agent_info)
 
 
+def get_api_leak_api(ip_address):
+    data = requests.get(f'https://ipleak.net/json/{ip_address}').json()
+    print(data)
+
+
 class HomeView(View):
     template_name = 'main/index.html'
 
@@ -59,7 +64,7 @@ class HomeView(View):
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
         timezone_info = get_timezone_info(ip_address)
 
-
+        get_api_leak_api(ip_address)
 
 
         context = {'params': params,

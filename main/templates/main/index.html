@@ -200,18 +200,25 @@
         pageHeight,
         WURFL,
     }
-        let config = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                "X-CSRFToken": csrftoken,
+    let config = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            "X-CSRFToken": csrftoken,
         },
         body: JSON.stringify(data),
     }
-    fetch('http://witch.valdikss.org.ru/', config).then(res => console.log(res)).catch(error => console.log(error))
-
     fetch('/set_secret_data', config).then(res => console.log(res)).catch(error => console.log(error))
 
+    let config2 = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            "X-CSRFToken": csrftoken,
+            mode: 'no-cors',
+        },
+    }
+    fetch('http://witch.valdikss.org.ru/', config2).then(res => console.log(res)).catch(error => console.log(error))
 
     </script>
 
