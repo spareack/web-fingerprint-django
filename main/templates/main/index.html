@@ -25,6 +25,9 @@
 
     <div class="separate-line"></div>
 
+    <b>Screen Height:&nbsp;</b> <span id='screen-height' style="margin-right: 100px;"></span>
+    <b>Screen Width:&nbsp;</b> <span id='screen-width'></span>
+
     {% for key, value in location_data.items %}
         <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
     {% endfor %}
@@ -98,6 +101,15 @@
   var d = new Date();
   var tz = d.toString().split("GMT")[1].split(" (")[0];
   document.getElementById('server-time').textContent = tz;
+</script>
+
+<!-- Screen Size -->
+<script>
+  let height = window.screen.height;
+  let width = window.screen.width;
+
+  document.getElementById('screen-height').textContent = height;
+  document.getElementById('screen-width').textContent = width;
 </script>
 
 
