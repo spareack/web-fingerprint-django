@@ -31,9 +31,43 @@
 
         <div class="separate-line"></div>
 
-        <div>
-            <b>Screen Height:&nbsp;</b> <span id='screen-height' style="margin-right: 100px;"></span>
-            <b>Screen Width:&nbsp;</b> <span id='screen-width'></span>
+        <div> <!-- Screen Size -->
+            <div>
+                <b>screenWidth:&nbsp;</b> <span id='screenWidth' style="margin-right: 100px;"></span>
+            </div>
+           <div>
+               <b>screenHeight:&nbsp;</b> <span id='screenHeight'></span>
+            </div>
+           <div>
+                <b>availableScreenWidth:&nbsp;</b> <span id='availableScreenWidth' style="margin-right: 100px;"></span>
+            </div>
+           <div>
+                <b>availableScreenHeight:&nbsp;</b> <span id='availableScreenHeight'></span>
+            </div>
+            <div>
+               <b>windowOuterWidth:&nbsp;</b> <span id='windowOuterWidth' style="margin-right: 100px;"></span>
+            </div>
+            <div>
+                <b>windowOuterHeight:&nbsp;</b> <span id='windowOuterHeight'></span>
+            </div>
+            <div>
+                <b>windowInnerWidthWithScroll:&nbsp;</b> <span id='windowInnerWidthWithScroll' style="margin-right: 100px;"></span>
+            </div>
+            <div>
+                <b>windowInnerHeightWithScroll:&nbsp;</b> <span id='windowInnerHeightWithScroll'></span>
+            </div>
+            <div>
+                <b>windowInnerWidth:&nbsp;</b> <span id='windowInnerWidth' style="margin-right: 100px;"></span>
+            </div>
+            <div>
+                <b>windowInnerHeight:&nbsp;</b> <span id='windowInnerHeight'></span>
+            </div>
+            <div>
+                <b>pageWidth:&nbsp;</b> <span id='pageWidth' style="margin-right: 100px;"></span>
+            </div>
+            <div>
+                <b>pageHeight:&nbsp;</b> <span id='pageHeight'></span>
+            </div>
         </div>
 
         <div class="separate-line"></div>
@@ -119,11 +153,31 @@
 
     <!-- Screen Size -->
     <script>
-      let height_value = window.screen.height;
-      let width_value = window.screen.width;
+      const screenWidth = window.screen.width
+      const screenHeight = window.screen.height;
+      const availableScreenWidth = window.screen.availWidth;
+      const availableScreenHeight = window.screen.availHeight;
+      const windowOuterWidth = window.outerWidth;
+      const windowOuterHeight = window.outerHeight;
+      const windowInnerWidthWithScroll = window.innerWidth;
+      const windowInnerHeightWithScroll = window.innerHeight;
+      const windowInnerWidth = document.documentElement.clientWidth;
+      const windowInnerHeight = document.documentElement.clientHeight;
+      const pageWidth = document.documentElement.scrollWidth;
+      const pageHeight = document.documentElement.scrollHeight;
 
-      document.getElementById('screen-height').textContent = height_value;
-      document.getElementById('screen-width').textContent = width_value;
+      document.getElementById('screenWidth').textContent = screenWidth;
+      document.getElementById('screenHeight').textContent = screenHeight;
+      document.getElementById('availableScreenWidth').textContent = availableScreenWidth;
+      document.getElementById('availableScreenHeight').textContent = availableScreenHeight;
+      document.getElementById('windowOuterWidth').textContent = windowOuterWidth;
+      document.getElementById('windowOuterHeight').textContent = windowOuterHeight;
+      document.getElementById('windowInnerWidthWithScroll').textContent = windowInnerWidthWithScroll;
+      document.getElementById('windowInnerHeightWithScroll').textContent = windowInnerHeightWithScroll;
+      document.getElementById('windowInnerWidth').textContent = windowInnerWidth;
+      document.getElementById('windowInnerWidth').textContent = windowInnerWidth;
+      document.getElementById('pageWidth').textContent = pageWidth;
+      document.getElementById('pageHeight').textContent = pageHeight;
     </script>
 
 

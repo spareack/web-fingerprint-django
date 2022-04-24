@@ -9,8 +9,15 @@ import requests
 
 
 def get_location_data(ip_address):
-    response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
-    return response
+    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'timezone', 'languages']
+    data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+    return {key: data.get(key) for key in location_keys_list if key in data}
+
+
+def get_timezone_info(ip_address):
+    keys_list = ['timezone', 'utc_offset']
+    data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+    return {key: data.get(key) for key in keys_list if key in data}
 
 
 def get_ip_address(data):
@@ -20,6 +27,13 @@ def get_ip_address(data):
     for header in headers_list:
         if header in data:
             return data.get(header)
+
+
+def get_all_ips(data):
+    headers_list = ['HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED',
+                    'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR']
+
+    return {header: data.get(header) for header in headers_list if header in data}
 
 
 def parse_user_agent(user_agent):
@@ -36,14 +50,15 @@ class HomeView(View):
         ip_address = get_ip_address(request.META)
         location_data = get_location_data(ip_address)
 
-        location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'timezone', 'languages']
+        all_ips = get_all_ips(ip_address)
 
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
 
         context = {'params': params,
                    'location_data': location_data,
                    'ip_timezone': location_data.get('utc_offset'),
-                   'user_agent_info': user_agent_info}
+                   'user_agent_info': user_agent_info,
+                   'all_ips': all_ips}
 
         # print(request.headers)
 
