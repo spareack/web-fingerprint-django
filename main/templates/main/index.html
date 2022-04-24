@@ -32,42 +32,20 @@
         <div class="separate-line"></div>
 
         <div> <!-- Screen Size -->
-            <div>
-                <b>screenWidth:&nbsp;</b> <span id='screenWidth' style="margin-right: 100px;"></span>
-            </div>
-           <div>
-               <b>screenHeight:&nbsp;</b> <span id='screenHeight'></span>
-            </div>
-           <div>
-                <b>availableScreenWidth:&nbsp;</b> <span id='availableScreenWidth' style="margin-right: 100px;"></span>
-            </div>
-           <div>
-                <b>availableScreenHeight:&nbsp;</b> <span id='availableScreenHeight'></span>
-            </div>
-            <div>
-               <b>windowOuterWidth:&nbsp;</b> <span id='windowOuterWidth' style="margin-right: 100px;"></span>
-            </div>
-            <div>
-                <b>windowOuterHeight:&nbsp;</b> <span id='windowOuterHeight'></span>
-            </div>
-            <div>
-                <b>windowInnerWidthWithScroll:&nbsp;</b> <span id='windowInnerWidthWithScroll' style="margin-right: 100px;"></span>
-            </div>
-            <div>
-                <b>windowInnerHeightWithScroll:&nbsp;</b> <span id='windowInnerHeightWithScroll'></span>
-            </div>
-            <div>
-                <b>windowInnerWidth:&nbsp;</b> <span id='windowInnerWidth' style="margin-right: 100px;"></span>
-            </div>
-            <div>
-                <b>windowInnerHeight:&nbsp;</b> <span id='windowInnerHeight'></span>
-            </div>
-            <div>
-                <b>pageWidth:&nbsp;</b> <span id='pageWidth' style="margin-right: 100px;"></span>
-            </div>
-            <div>
-                <b>pageHeight:&nbsp;</b> <span id='pageHeight'></span>
-            </div>
+            <div><b>screenWidth:&nbsp;</b> <span id='screenWidth' style="margin-right: 100px;"></span></div>
+            <div><b>screenHeight:&nbsp;</b> <span id='screenHeight'></span></div>
+            <div><b>availableScreenWidth:&nbsp;</b> <span id='availableScreenWidth' style="margin-right: 100px;"></span> </div>
+            <div><b>availableScreenHeight:&nbsp;</b> <span id='availableScreenHeight'></span></div>
+            <div><b>windowOuterWidth:&nbsp;</b> <span id='windowOuterWidth' style="margin-right: 100px;"></span></div>
+            <div><b>windowOuterHeight:&nbsp;</b> <span id='windowOuterHeight'></span></div>
+            <div><b>windowInnerWidthWithScroll:&nbsp;</b> <span id='windowInnerWidthWithScroll' style="margin-right: 100px;"></span></div>
+            <div><b>windowInnerHeightWithScroll:&nbsp;</b> <span id='windowInnerHeightWithScroll'></span></div>
+            <div><b>windowInnerWidth:&nbsp;</b> <span id='windowInnerWidth' style="margin-right: 100px;"></span></div>
+            <div><b>windowInnerHeight:&nbsp;</b> <span id='windowInnerHeight'></span></div>
+            <div><b>pageWidth:&nbsp;</b> <span id='pageWidth' style="margin-right: 100px;"></span></div>
+            <div><b>pageHeight:&nbsp;</b> <span id='pageHeight'></span></div>
+
+            <div><b>TOR:&nbsp;</b> <span id='tor'></span>NO</div>
         </div>
 
         <div class="separate-line"></div>
@@ -175,9 +153,12 @@
       document.getElementById('windowInnerWidthWithScroll').textContent = windowInnerWidthWithScroll;
       document.getElementById('windowInnerHeightWithScroll').textContent = windowInnerHeightWithScroll;
       document.getElementById('windowInnerWidth').textContent = windowInnerWidth;
-      document.getElementById('windowInnerWidth').textContent = windowInnerWidth;
+      document.getElementById('windowInnerHeight').textContent = windowInnerHeight;
       document.getElementById('pageWidth').textContent = pageWidth;
       document.getElementById('pageHeight').textContent = pageHeight;
+
+      if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
+
     </script>
 
 
