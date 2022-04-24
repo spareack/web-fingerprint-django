@@ -129,6 +129,7 @@
       document.getElementById('server-time').textContent = tz;
     </script>
 
+
     <!-- Screen Size -->
     <script>
       const screenWidth = window.screen.width
@@ -158,9 +159,65 @@
       document.getElementById('pageHeight').textContent = pageHeight;
 
       if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
+    </script>
+        {% csrf_token %}
 
+    <script>
+    let csrftoken = getCookie('csrftoken');
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    let data = {
+        screenWidth,
+        screenHeight,
+        availableScreenWidth,
+        availableScreenHeight,
+        windowOuterWidth,
+        windowOuterHeight,
+        windowInnerWidthWithScroll,
+        windowInnerHeightWithScroll,
+        windowInnerWidth,
+        windowInnerHeight,
+        pageWidth,
+        pageHeight,
+    }
+        let config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                "X-CSRFToken": csrftoken,
+        },
+        body: JSON.stringify(data),
+    }
+    fetch('/set_secret_data', config).then(res => console.log(res)).catch(error => console.log(error))
     </script>
 
+    <script>
+
+<!--        window.navigator.geolocation.getCurrentPosition((pos) => console.log(pos));-->
+        console.log(window.navigator.plugins);
+
+        console.log(window.navigator.language);
+        console.log(window.navigator.userAgent);
+
+<!--        alert(window.fullScreen);-->
+        console.log(window)
+
+    </script>
 
     <style>
       .separate-line {

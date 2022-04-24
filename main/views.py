@@ -4,8 +4,11 @@ from user_agents import parse
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
 
 import requests
+import json
 
 
 def get_location_data(ip_address):
@@ -38,6 +41,7 @@ def get_all_ips(data):
 
 def parse_user_agent(user_agent):
     user_agent_info = parse(user_agent)
+    print(user_agent_info)
     return str(user_agent_info)
 
 
@@ -45,6 +49,8 @@ class HomeView(View):
     template_name = 'main/index.html'
 
     def get(self, request):
+        print(get_token(request))
+
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
         ip_address = get_ip_address(request.META)
@@ -63,3 +69,11 @@ class HomeView(View):
         # print(request.headers)
 
         return render(request, self.template_name, context)
+
+
+# @csrf_protect
+def set_secret_data(request):
+    json_data = json.loads(request.body)
+    print(get_token(request))
+    print(json_data)
+    return HttpResponse(5)
