@@ -46,6 +46,7 @@
             <div><b>pageHeight:&nbsp;</b> <span id='pageHeight'></span></div>
 
             <div><b>TOR:&nbsp;</b> <span id='tor'>NO</span></div>
+            <div id="completeDevice"></div>
         </div>
 
         <div class="separate-line"></div>
@@ -122,6 +123,8 @@
         })
     </script>
 
+    <!--  wurfl  -->
+    <script src="//wurfl.io/wurfl.js" crossorigin></script>
     <!-- system time -->
     <script>
       var d = new Date();
@@ -157,6 +160,7 @@
       document.getElementById('windowInnerHeight').textContent = windowInnerHeight;
       document.getElementById('pageWidth').textContent = pageWidth;
       document.getElementById('pageHeight').textContent = pageHeight;
+      document.getElementById('completeDevice').textContent = WURFL.complete_device_name;
 
       if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
     </script>
@@ -194,6 +198,7 @@
         windowInnerHeight,
         pageWidth,
         pageHeight,
+        WURFL,
     }
         let config = {
             method: 'POST',
@@ -216,6 +221,7 @@
 
 <!--        alert(window.fullScreen);-->
         console.log(window)
+        console.log(WURFL)
 
     </script>
 
