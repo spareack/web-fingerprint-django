@@ -40,11 +40,6 @@ INSTALLED_APPS = [
     'main',
 ]
 
-P0FSOCKET = "path/to/p0f_unix_socket"
-
-MIDDLEWARE_CLASSES = [
-    'p0f.django.middleware.P0fMiddleware'
-]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 
 ROOT_URLCONF = 'fingerprint.urls'

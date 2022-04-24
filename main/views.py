@@ -10,7 +10,6 @@ from django.middleware.csrf import get_token
 import requests
 import json
 
-
 def get_location_data(ip_address):
     location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'languages']
     data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
@@ -51,8 +50,6 @@ class HomeView(View):
     def get(self, request):
         # print(get_token(request))
 
-        print(request.p0f)
-
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
         ip_address = get_ip_address(request.META)
@@ -61,6 +58,9 @@ class HomeView(View):
         all_ips = get_all_ips(ip_address)
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
         timezone_info = get_timezone_info(ip_address)
+
+
+
 
         context = {'params': params,
                    'location_data': location_data,
