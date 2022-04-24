@@ -8,118 +8,131 @@
 
 <body style=" font-size: 15px; line-height: 18px;">
 
+    <div class="container" style="margin-top: 50px">
 
-<div class="container" style="margin-top: 50px">
-    <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info }} </span>
+        <div>
+            <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info }} </span>
+        </div>
 
-    <div class="separate-line"></div>
+        <div class="separate-line"></div>
 
-    <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 200px;"></span>
-    <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
-    <b>Canvas Fingerprint:&nbsp;</b> <span id='canvas-hash' style="margin-right: 100px;"></span>
+        <div>
+            <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 200px;"></span>
+            <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
+            <b>Canvas Fingerprint:&nbsp;</b> <span id='canvas-hash' style="margin-right: 100px;"></span>
+        </div>
 
-    <div class="separate-line"></div>
+        <div class="separate-line"></div>
 
-    <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ ip_timezone }} </span>
-    <b>System Timezone:&nbsp;</b> <span id='server-time'></span>
+        <div>
+            <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ ip_timezone }} </span>
+            <b>System Timezone:&nbsp;</b> <span id='server-time'></span>
+        </div>
 
-    <div class="separate-line"></div>
+        <div class="separate-line"></div>
 
-    <b>Screen Height:&nbsp;</b> <span id='screen-height' style="margin-right: 100px;"></span>
-    <b>Screen Width:&nbsp;</b> <span id='screen-width'></span>
+        <div>
+            <b>Screen Height:&nbsp;</b> <span id='screen-height' style="margin-right: 100px;"></span>
+            <b>Screen Width:&nbsp;</b> <span id='screen-width'></span>
+        </div>
 
-    {% for key, value in location_data.items %}
-        <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
-    {% endfor %}
+        <div class="separate-line"></div>
 
-    <div class="separate-line"></div>
+        <div>
+            {% for key, value in location_data.items %}
+                <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
+            {% endfor %}
+        </div>
 
-    {% for key, value in params.items %}
-        <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
-    {% endfor %}
+        <div class="separate-line"></div>
 
-    <div class="separate-line"></div>
-</div>
+        <div>
+            {% for key, value in params.items %}
+                <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
+            {% endfor %}
+        </div>
 
-<!-- canvas test-->
-<script>
-  var canvas = document.getElementById("myCanvas");
-  var ctx = canvas.getContext("2d");
+        <div class="separate-line"></div>
+    </div>
 
-  ctx.fillStyle = "rgb(255,0,255)";
-  ctx.beginPath();
-  ctx.rect(20, 20, 150, 100);
-  ctx.fill();
-  ctx.stroke();
-  ctx.closePath();
-  ctx.beginPath();
-  ctx.fillStyle = "rgb(0,255,255)";
-  ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
-  ctx.fill();
-  ctx.stroke();
-  ctx.closePath();
+    <!-- canvas test-->
+    <script>
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
 
-  txt = 'abz190#$%^@£éú';
-  ctx.textBaseline = "top";
-  ctx.font = '17px "Arial 17"';
-  ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = "rgb(255,5,5)";
-  ctx.rotate(.03);
-  ctx.fillText(txt, 4, 17);
-  ctx.fillStyle = "rgb(155,255,5)";
-  ctx.shadowBlur=8;
-  ctx.shadowColor="red";
-  ctx.fillRect(20,12,100,5);
+      ctx.fillStyle = "rgb(255,0,255)";
+      ctx.beginPath();
+      ctx.rect(20, 20, 150, 100);
+      ctx.fill();
+      ctx.stroke();
+      ctx.closePath();
+      ctx.beginPath();
+      ctx.fillStyle = "rgb(0,255,255)";
+      ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
+      ctx.fill();
+      ctx.stroke();
+      ctx.closePath();
 
-  src = canvas.toDataURL();
-  hash = 0;
+      txt = 'abz190#$%^@£éú';
+      ctx.textBaseline = "top";
+      ctx.font = '17px "Arial 17"';
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = "rgb(255,5,5)";
+      ctx.rotate(.03);
+      ctx.fillText(txt, 4, 17);
+      ctx.fillStyle = "rgb(155,255,5)";
+      ctx.shadowBlur=8;
+      ctx.shadowColor="red";
+      ctx.fillRect(20,12,100,5);
 
-  for (i = 0; i < src.length; i++) {
-      char = src.charCodeAt(i);
-      hash = ((hash<<5)-hash)+char;
-      hash = hash & hash;
-  }
+      src = canvas.toDataURL();
+      hash = 0;
 
-  document.getElementById('canvas-hash-test').textContent = hash;
-</script>
+      for (i = 0; i < src.length; i++) {
+          char = src.charCodeAt(i);
+          hash = ((hash<<5)-hash)+char;
+          hash = hash & hash;
+      }
 
-<!-- canvas fingerprint-->
-<script>
-  let height = window.screen.height;
-  let width = window.screen.width;
+      document.getElementById('canvas-hash-test').textContent = hash;
+    </script>
 
-  const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3').then(FingerprintJS => FingerprintJS.load())
+    <!-- canvas fingerprint-->
+    <script>
+      let height = window.screen.height;
+      let width = window.screen.width;
 
-  fpPromise
-    .then(fp => fp.get()).then(result => { const visitorId = result.visitorId
-      document.getElementById('canvas-hash').textContent = visitorId;
-    })
-</script>
+      const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3').then(FingerprintJS => FingerprintJS.load())
 
-<!-- system time -->
-<script>
-  var d = new Date();
-  var tz = d.toString().split("GMT")[1].split(" (")[0];
-  document.getElementById('server-time').textContent = tz;
-</script>
+      fpPromise
+        .then(fp => fp.get()).then(result => { const visitorId = result.visitorId
+          document.getElementById('canvas-hash').textContent = visitorId;
+        })
+    </script>
 
-<!-- Screen Size -->
-<script>
-  let height_value = window.screen.height;
-  let width_value = window.screen.width;
+    <!-- system time -->
+    <script>
+      var d = new Date();
+      var tz = d.toString().split("GMT")[1].split(" (")[0];
+      document.getElementById('server-time').textContent = tz;
+    </script>
 
-  document.getElementById('screen-height').textContent = height_value;
-  document.getElementById('screen-width').textContent = width_value;
-</script>
+    <!-- Screen Size -->
+    <script>
+      let height_value = window.screen.height;
+      let width_value = window.screen.width;
+
+      document.getElementById('screen-height').textContent = height_value;
+      document.getElementById('screen-width').textContent = width_value;
+    </script>
 
 
-<style>
-  .separate-line {
-    margin: 20px 0;
-    border-bottom: 2px solid red;
-  }
-</style>
-
+    <style>
+      .separate-line {
+        margin: 20px 0;
+        border-bottom: 2px solid red;
+      }
+    </style>
 
 </body>
 </html>
