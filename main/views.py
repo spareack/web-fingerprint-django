@@ -9,7 +9,7 @@ import requests
 
 
 def get_location_data(ip_address):
-    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'timezone', 'languages']
+    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'languages']
     data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
     return {key: data.get(key) for key in location_keys_list if key in data}
 
@@ -51,13 +51,13 @@ class HomeView(View):
         location_data = get_location_data(ip_address)
 
         all_ips = get_all_ips(ip_address)
-
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
+        timezone_info = get_timezone_info(ip_address)
 
         context = {'params': params,
                    'location_data': location_data,
-                   'ip_timezone': location_data.get('utc_offset'),
                    'user_agent_info': user_agent_info,
+                   'timezone_info': timezone_info,
                    'all_ips': all_ips}
 
         # print(request.headers)
