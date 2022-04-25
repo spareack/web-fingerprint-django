@@ -1,6 +1,17 @@
 asgiref==3.5.0
+certifi==2021.10.8
+charset-normalizer==2.0.12
 Django==3.2.13
 django-templates==0.0.13
+idna==3.3
+p0f==1.0.0
 pytz==2022.1
+requests==2.27.1
+scapy==2.4.5
 sqlparse==0.4.2
+style==1.1.0
 typing-extensions==4.2.0
+ua-parser==0.10.0
+update==0.0.1
+urllib3==1.26.9
+user-agents==2.2.0

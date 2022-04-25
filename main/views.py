@@ -47,7 +47,8 @@ def parse_user_agent(user_agent):
 
 def get_p0f_info(ip_adress):
     data = None
-    p0f = P0f("p0f.sock") # point this to socket defined with "-s" argument.
+    p0f = P0f("p0f.sock")
+    # point this to socket defined with "-s" argument.
     try:
         data = p0f.get_info(ip_adress)
     except P0fException as e:
