@@ -81,7 +81,7 @@ class HomeView(View):
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
         timezone_info = get_timezone_info(ip_address)
 
-        get_p0f_info(ip_address)
+        # get_p0f_info(ip_address)
 
 
         context = {'params': params,
