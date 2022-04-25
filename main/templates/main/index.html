@@ -210,20 +210,10 @@
     }
     fetch('/set_secret_data', config).then(res => console.log(res)).catch(error => console.log(error))
 
-    let config2 = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            "X-CSRFToken": csrftoken,
-        },
-    }
-    fetch('http://witch.valdikss.org.ru/', config2).then(res => console.log(res)).catch(error => console.log(error))
-
     </script>
 
     <script>
 
-<!--        window.navigator.geolocation.getCurrentPosition((pos) => console.log(pos));-->
         console.log(window.navigator.plugins);
 
         console.log(window.navigator.language);
@@ -232,6 +222,8 @@
 <!--        alert(window.fullScreen);-->
         console.log(window)
         console.log(WURFL)
+
+        console.log(window.navigator.connection)
 
         console.log(window.components);
 
