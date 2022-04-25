@@ -1,5 +1,6 @@
 
 from user_agents import parse
+from p0f import P0f, P0fException
 
 from django.shortcuts import render
 from django.views import View
@@ -44,9 +45,24 @@ def parse_user_agent(user_agent):
     return str(user_agent_info)
 
 
-def get_api_leak_api(ip_address):
-    data = requests.get(f'https://ipleak.net/json/{ip_address}').json()
-    print(data)
+def get_p0f_info(ip_adress):
+    data = None
+    p0f = P0f("127.0.0.3") # point this to socket defined with "-s" argument.
+    try:
+        data = p0f.get_info(ip_adress)
+    except P0fException as e:
+        # Invalid query was sent to p0f. Maybe the API has changed?
+        print(e)
+    except KeyError as e:
+        # No data is available for this IP address.
+        print(e)
+    except ValueError as e:
+        # p0f returned invalid constant values. Maybe the API has changed?
+        print(e)
+
+    if data:
+        print("First seen:", data["first_seen"])
+        print("Last seen:", data["last_seen"])
 
 
 class HomeView(View):
@@ -64,14 +80,14 @@ class HomeView(View):
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
         timezone_info = get_timezone_info(ip_address)
 
-        get_api_leak_api(ip_address)
+        get_p0f_info(ip_address)
 
 
         context = {'params': params,
                    'location_data': location_data,
                    'user_agent_info': user_agent_info,
                    'timezone_info': timezone_info,
-                   'all_ips': all_ips}
+                   'all_ips': all_ips }
 
         # print(request.headers)
 
