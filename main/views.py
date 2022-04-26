@@ -7,6 +7,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
+from .models import User
 
 import requests
 import json
@@ -71,10 +72,15 @@ class HomeView(View):
 
     def get(self, request):
         # print(get_token(request))
-
+        ip_address = get_ip_address(request.META)
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
-        ip_address = get_ip_address(request.META)
+        check_user = User.objects.filter(IP=ip_address)
+        if check_user.exists():
+            check_user.update(headers=params)
+        else:
+            User.objects.create(IP=ip_address, headers=json.dumps(params))
+
         location_data = get_location_data(ip_address)
 
         all_ips = get_all_ips(ip_address)
@@ -82,7 +88,6 @@ class HomeView(View):
         timezone_info = get_timezone_info(ip_address)
 
         # get_p0f_info(ip_address)
-
 
         context = {'params': params,
                    'location_data': location_data,
@@ -95,9 +100,21 @@ class HomeView(View):
         return render(request, self.template_name, context)
 
 
-# @csrf_protect
-def set_secret_data(request):
-    json_data = json.loads(request.body)
-    # print(get_token(request))
-    # print(json_data)
-    return HttpResponse(5)
+class DataJs(View):
+
+    def post(self, request):
+        ip_address = get_ip_address(request.META)
+        params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
+        # print(params)
+        json_data = json.loads(request.body)
+
+        check_user = User.objects.filter(IP=ip_address)
+        if check_user.exists():
+            check_user.update(js_data=request.body)
+        else:
+            User.objects.create(IP=ip_address, js_data=request.body)
+
+        return HttpResponse(5)
+
+
+

@@ -185,6 +185,30 @@
         return cookieValue;
     }
 
+    function get_special_values()
+    {
+        let used_keys = []
+        const slovar = new Object();
+
+        function get_iter_objects(old_key, obj)
+        {
+            if (typeof(obj) == "object")
+            {
+                for(var key in obj) {
+                    if (used_keys.indexOf(key) == -1)
+                    {
+                        used_keys.push(key)
+                        get_iter_objects(key, obj[key])
+                    }
+                }
+            }
+            else if (typeof(obj) != "function" && obj != "") slovar[old_key] = obj
+        }
+
+        get_iter_objects("-1", window)
+        return slovar
+    }
+
     let data = {
         screenWidth,
         screenHeight,
@@ -199,6 +223,7 @@
         pageWidth,
         pageHeight,
         WURFL,
+        special_values: get_special_values()
     }
     let config = {
         method: 'POST',
@@ -208,33 +233,20 @@
         },
         body: JSON.stringify(data),
     }
+    console.log(get_special_values())
     fetch('/set_secret_data', config).then(res => console.log(res)).catch(error => console.log(error))
 
     </script>
 
     <script>
 
-        console.log(window.navigator.plugins);
-
-        console.log(window.navigator.language);
-        console.log(window.navigator.userAgent);
-
-<!--        alert(window.fullScreen);-->
-        console.log(window)
-        console.log(WURFL)
-
-        console.log(window.navigator.connection)
-
-        console.log(window.components);
 
     </script>
-
     <style>
       .separate-line {
         margin: 20px 0;
         border-bottom: 2px solid red;
       }
     </style>
-
 </body>
 </html>
