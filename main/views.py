@@ -79,7 +79,7 @@ class HomeView(View):
         if check_user.exists():
             check_user.update(headers=params)
         else:
-            User.objects.create(IP=ip_address, headers=json.dumps(params))
+            User.objects.create(IP=ip_address, headers=params)
 
         location_data = get_location_data(ip_address)
 
@@ -104,15 +104,13 @@ class DataJs(View):
 
     def post(self, request):
         ip_address = get_ip_address(request.META)
-        params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
-        # print(params)
         json_data = json.loads(request.body)
 
         check_user = User.objects.filter(IP=ip_address)
         if check_user.exists():
-            check_user.update(js_data=request.body)
+            check_user.update(js_data=json.dumps(json_data))
         else:
-            User.objects.create(IP=ip_address, js_data=request.body)
+            User.objects.create(IP=ip_address, js_data=json.dumps(json_data))
 
         return HttpResponse(5)
 
