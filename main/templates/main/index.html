@@ -3,85 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <title>???</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
-
-<body style=" font-size: 15px; line-height: 18px;">
-
+<body class="" style="font-size: 15px; line-height: 18px;">
     <div class="container" style="margin-top: 50px">
-
-        <div>
-            <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info.device_info }} </span>
-            <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info.device_os }} </span>
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample0" aria-expanded="false" aria-controls="collapseExample">
+                Identify </div>
+            <div class="collapse show" id="collapseExample0">
+                <div class="card-body">
+                    <div id="main_section"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="separate-line"></div>
-
-        <!-- Fingerprint section  -->
-        <div>
-            <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 200px;"></span>
-            <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
-            <b>Canvas Fingerprint:&nbsp;</b> <span id='canvas-hash' style="margin-right: 100px;"></span>
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
+                UserAgent section </div>
+            <div class="collapse show" id="collapseExample1">
+                <div class="card-body">
+                    <h6>Device Info:&nbsp;</h6> <span style="margin-right: 200px;"> {{ user_agent_info.device_info }} </span>
+                    <h6>sum:&nbsp;</h6> <span style="margin-right: 200px;"> {{ user_agent_info.os_check }} </span>
+                    <div>TOR:&nbsp; <span id='tor'>NO</span></div>
+                    <div>Proxy:&nbsp; <span id='proxy'>NO</span></div>
+                </div>
+            </div>
         </div>
 
-        <div class="separate-line"></div>
-
-        <!-- Timezone section  -->
-        <div>
-            <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.utc_offset }} </span>
-            <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
-            <b>Value:&nbsp;</b> <span id='timezone-value'></span>
-
-        </div>
-        <!-- Proxy section  -->
-        <div> 
-            <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.utc_offset }} </span>
-            <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
-            <b>Value:&nbsp;</b> <span id='timezone-value'></span>
-
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                Fingerprint section </div>
+            <div class="collapse show" id="collapseExample2">
+                <div class="card-body">
+                    <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 200px;"></span>
+                    <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
+                    <b>Canvas Fingerprint:&nbsp;</b> <span id='canvas-hash' style="margin-right: 100px;"></span>
+                </div>
+            </div>
         </div>
 
-        <div class="separate-line"></div>
-
-        <div> <!-- Screen Size -->
-            <div><b>screenWidth:&nbsp;</b> <span id='screenWidth' style="margin-right: 100px;"></span></div>
-            <div><b>screenHeight:&nbsp;</b> <span id='screenHeight'></span></div>
-            <div><b>availableScreenWidth:&nbsp;</b> <span id='availableScreenWidth' style="margin-right: 100px;"></span> </div>
-            <div><b>availableScreenHeight:&nbsp;</b> <span id='availableScreenHeight'></span></div>
-            <div><b>windowOuterWidth:&nbsp;</b> <span id='windowOuterWidth' style="margin-right: 100px;"></span></div>
-            <div><b>windowOuterHeight:&nbsp;</b> <span id='windowOuterHeight'></span></div>
-            <div><b>windowInnerWidthWithScroll:&nbsp;</b> <span id='windowInnerWidthWithScroll' style="margin-right: 100px;"></span></div>
-            <div><b>windowInnerHeightWithScroll:&nbsp;</b> <span id='windowInnerHeightWithScroll'></span></div>
-            <div><b>windowInnerWidth:&nbsp;</b> <span id='windowInnerWidth' style="margin-right: 100px;"></span></div>
-            <div><b>windowInnerHeight:&nbsp;</b> <span id='windowInnerHeight'></span></div>
-            <div><b>pageWidth:&nbsp;</b> <span id='pageWidth' style="margin-right: 100px;"></span></div>
-            <div><b>pageHeight:&nbsp;</b> <span id='pageHeight'></span></div>
-
-            <div><b>TOR:&nbsp;</b> <span id='tor'>NO</span></div>
-            <div><b>Proxy:&nbsp;</b> <span id='proxy'>NO</span></div>
-            <div id="completeDevice"></div>
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample">
+                Timezone section </div>
+            <div class="collapse show" id="collapseExample3">
+                <div class="card-body">
+                    <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.timezone }}: {{ location_data.utc_offset }} </span>
+                    
+                    <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
+                    <b>Value:&nbsp;</b> <span id='timezone-value'></span>
+                </div>
+            </div>
+        </div>
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample4" aria-expanded="false" aria-controls="collapseExample">
+                Proxy section </div>
+            <div class="collapse show" id="collapseExample4">
+                <div class="card-body">
+                    {% for key, value in proxy_info.all_ips.items %}
+                        <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
+                    {% endfor %}
+                    <b>Сonclusion:&nbsp;</b> <span style="margin-right: 100px;"> {{ proxy_info.proxy_value }} </span>
+                </div>
+            </div>
         </div>
 
-        <div class="separate-line"></div>
-
-        <div>
-            {% for key, value in location_data.items %}
-                <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
-            {% endfor %}
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample5" aria-expanded="false" aria-controls="collapseExample">
+                Locate section </div>
+            <div class="collapse show" id="collapseExample5">
+                <div class="card-body">
+                    {% for key, value in location_data.items %}
+                        <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
-        <div class="separate-line"></div>
-
-        <div>
-            {% for key, value in params.items %}
-                <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
-            {% endfor %}
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample6" aria-expanded="false" aria-controls="collapseExample">
+                Screen Size </div>
+            <div class="collapse show" id="collapseExample6">
+                <div class="card-body">
+                    <div><h6 style="display: inline">screenWidth:&nbsp;</h6> <span id='screenWidth' style="margin-right: 100px;"></span></div>
+                    <div><h6 style="display: inline">screenHeight:&nbsp;</h6> <span id='screenHeight'></span></div>
+                    <div><h6 style="display: inline">availableScreenWidth:&nbsp;</h6> <span id='availableScreenWidth' style="margin-right: 100px;"></span> </div>
+                    <div><h6 style="display: inline">availableScreenHeight:&nbsp;</h6> <span id='availableScreenHeight'></span></div>
+                    <div><h6 style="display: inline">windowOuterWidth:&nbsp;</h6> <span id='windowOuterWidth' style="margin-right: 100px;"></span></div>
+                    <div><h6 style="display: inline">windowOuterHeight:&nbsp;</h6> <span id='windowOuterHeight'></span></div>
+                    <div><h6 style="display: inline">windowInnerWidthWithScroll:&nbsp;</h6> <span id='windowInnerWidthWithScroll' style="margin-right: 100px;"></span></div>
+                    <div><h6 style="display: inline">windowInnerHeightWithScroll:&nbsp;</h6> <span id='windowInnerHeightWithScroll'></span></div>
+                    <div><h6 style="display: inline">windowInnerWidth:&nbsp;</h6> <span id='windowInnerWidth' style="margin-right: 100px;"></span></div>
+                    <div><h6 style="display: inline">windowInnerHeight:&nbsp;</h6> <span id='windowInnerHeight'></span></div>
+                    <div><h6 style="display: inline">pageWidth:&nbsp;</h6> <span id='pageWidth' style="margin-right: 100px;"></span></div>
+                    <div><h6 style="display: inline">pageHeight:&nbsp;</h6> <span id='pageHeight'></span></div>
+                </div>
+            </div>
         </div>
 
-        <div class="separate-line"></div>
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample7" aria-expanded="false" aria-controls="collapseExample">
+                All Headers </div>
+            <div class="collapse show" id="collapseExample7">
+                <div class="card-body">
+                    {% for key, value in params.items %}
+                        <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- canvas test-->
+    <!-- Canvas test-->
     <script>
         var canvas = document.getElementById("myCanvas");
         var ctx = canvas.getContext("2d");
@@ -245,7 +278,10 @@
         body: JSON.stringify(data),
     }
     console.log(get_special_values())
-    fetch('/set_secret_data', config).then(res => console.log(res)).catch(error => console.log(error))
+            
+    fetch('/set_secret_data', config).then(response => { return response.text().then(function(text) {
+        document.getElementById('main_section').innerHTML = text; }) })
+    
 
     </script>
 
@@ -255,6 +291,21 @@
             margin: 20px 0;
             border-bottom: 2px solid red;
         }
+        .card {
+            margin-bottom: 50px;
+        }
+
+        .bg-head {
+            background-color: rgb(253, 63, 73);
+        }
+        .padding0 {
+            padding: 0;
+        }
+        .margin0 {
+            margin: 0;
+        }
+
+
     </style>
 </body>
 </html>
