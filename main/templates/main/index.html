@@ -160,13 +160,13 @@
     <script>
         let height = window.screen.height;
         let width = window.screen.width;
+        let visitorId = '';
         const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3').then(FingerprintJS => FingerprintJS.load())
         fpPromise.then(fp => fp.get()).then(result => { 
-            const visitorId = result.visitorId
+            visitorId = result.visitorId;
             document.getElementById('canvas-hash').textContent = visitorId;
         })
     </script>
-
 
     <!-- system time -->
     <script>
@@ -176,7 +176,6 @@
         if (!{{local}} && tz == "{{ location_data.utc_offset }}") document.getElementById('timezone-value').textContent = 'Timezone check correct';
         else document.getElementById('timezone-value').textContent = 'Timezone check failed!';
     </script>
-
 
     <!-- Screen Size -->
     <script>
@@ -246,7 +245,9 @@
                     }
                 }
             }
-            else if (typeof(obj) != "function" && obj != "") slovar[old_key] = obj
+            else if (typeof(obj) != "function" && obj != "" && 
+                     old_key != 'innerHTML' && old_key != 'outerHTML' &&
+                     old_key != 'innerText' && old_key != 'outerText') slovar[old_key] = obj
         }
 
         get_iter_objects("-1", window)
@@ -254,21 +255,12 @@
     }
 
     let data = {
-        screenWidth,
-        screenHeight,
-        availableScreenWidth,
-        availableScreenHeight,
-        windowOuterWidth,
-        windowOuterHeight,
-        windowInnerWidthWithScroll,
-        windowInnerHeightWithScroll,
-        windowInnerWidth,
-        windowInnerHeight,
-        pageWidth,
-        pageHeight,
         special_values: get_special_values(),
         test_hash: hash,
+        fingerprint_js: visitorId,
+        system_timezone: tz,
     }
+
     let config = {
         method: 'POST',
         headers: {
@@ -277,12 +269,12 @@
         },
         body: JSON.stringify(data),
     }
-    console.log(get_special_values())
             
     fetch('/set_secret_data', config).then(response => { return response.text().then(function(text) {
-        document.getElementById('main_section').innerHTML = text; }) })
+        document.getElementById('main_section').innerHTML = text; 
+        })
+    })
     
-
     </script>
 
 
@@ -304,7 +296,6 @@
         .margin0 {
             margin: 0;
         }
-
 
     </style>
 </body>

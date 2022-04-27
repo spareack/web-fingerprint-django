@@ -12,6 +12,7 @@ from .models import User
 import requests
 import json
 import math
+import datetime
 
 
 def get_ip_address(data):
@@ -42,7 +43,7 @@ def get_proxy_info(data):
         if proxy_value:
             proxy_response = 'Using Proxy or Redirect connection: ' + proxy_response
         else:
-            proxy_response += 'No Proxy or connection redirect'
+            proxy_response = 'No Proxy or connection redirect'
 
     return {'all_ips': all_ips, 'proxy_value': proxy_response}
 
@@ -59,7 +60,8 @@ def parse_user_agent(user_agent):
     user_agent_info = parse(user_agent)
 
     response = {'device_info': str(user_agent_info), 'device_os': user_agent_info.device.family}
-    response_str = ''
+
+    response_str = 'User Agent seems valid'
 
     if user_agent_info.device.family == 'Generic Smartphone' or \
             user_agent_info.device.family == 'Generic Feature Phone' or \
@@ -174,34 +176,88 @@ class DataJs(View):
 
         return compare_results
 
-    def get_main_sum(self, request, js_data):
+    def search_component(self, component):
+        all_users = User.objects.all()
+        for user in all_users:
+            spec_data = json.loads(user.spec_data)
+
+            if user.IP == component:
+                return user.datetime.strftime("%Y/%m/%d %H:%M:%S")
+
+            for header in spec_data:
+                if spec_data[header] == component:
+                    return user.datetime
+        return None
+
+    def get_main_sum(self, request):
         # compare_results = self.compare_js_headers(js_data)
         # print(compare_results)
 
-        ip_address = get_ip_address(request.META)
-        params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
+        headers = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
+        js_data = json.loads(request.body)
+        js_spec_headers = js_data['special_values']
 
+        response = ''
 
-        check_user = User.objects.filter(IP=ip_address)
-        if check_user.exists():
-            check_user.update(headers=params)
+        test_hash = js_data['test_hash']
+        test_hash_visit = self.search_component(test_hash)
+
+        if test_hash_visit is not None:
+            response += f'<h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{test_hash}: Same hash visit at {test_hash_visit}</span>'
         else:
-            User.objects.create(IP=ip_address, headers=params)
+            response += f'<br><h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{test_hash}: First Entry</span>'
+
+        # print(js_data)
+        fingerprint = js_data['fingerprint_js']
+        fingerprint_visit = self.search_component(fingerprint)
+
+        if fingerprint_visit is not None:
+            response += f'<br><h6 style="display: inline">Fingerprint Test:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{fingerprint}: Same fingerprint at {fingerprint_visit}</span>'
+        else:
+            response += f'<br><h6 style="display: inline">Fingerprint Test:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{fingerprint}: First Entry</span>'
+
+        ip_address = get_ip_address(request.META)
+        ip_address_visit = self.search_component(ip_address)
+
+        if ip_address_visit is not None:
+            response += f'<br><h6 style="display: inline">IP address:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{ip_address}: Same address at {ip_address_visit}</span>'
+        else:
+            response += f'<br><h6 style="display: inline">IP address:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{ip_address}: First Entry</span>'
 
         location_data = get_location_data(ip_address)
+        system_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        system_language_main = js_spec_headers.get('language')
+
+        if 'languages' in location_data and system_language_main.lower() not in location_data['languages'].lower() and \
+                all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
+
+            response += f'<br><h6 style="display: inline">System and Server Languages are different:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}!</span>'
+
+        if 'utc_offset' in location_data and js_data['system_timezone'] != location_data['utc_offset']:
+            response += f'<br><h6 style="display: inline">System and Server Time are different:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{js_data["system_timezone"]} different' \
+                f' with {location_data["utc_offset"]} {location_data["timezone"]}!</span>'
+
         proxy_info = get_proxy_info(ip_address)
+        response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
+            f'<span style="margin-right: 200px;"> {proxy_info.get("proxy_value")}</span>'
+
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
+        response += f'<br><h6 style="display: inline">Device info:&nbsp;</h6> ' \
+            f'<span style="margin-right: 200px;"> {user_agent_info.get("os_check")}</span>'
 
-
-
-        return f'<h6>Device Info:&nbsp;</h6> <span style="margin-right: 200px;">{user_agent_info["device_info"]}</span>\
-                 <h6>sum:&nbsp;</h6> <span style="margin-right: 200px;"> { user_agent_info["os_check"] } </span> \
-                 <h6>Zdarova:&nbsp;</h6> <span style="margin-right: 200px;"> Helou </span>'
+        return response
 
     def post(self, request):
-        ip_address = get_ip_address(request.META)
-        js_data = json.loads(request.body)
-        response = self.get_main_sum(request, js_data)
+
+        response = self.get_main_sum(request)
 
         # check_user = User.objects.filter(IP=ip_address)
         # if check_user.exists():
