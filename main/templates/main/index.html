@@ -25,8 +25,10 @@
         <div class="separate-line"></div>
 
         <div>
-            <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ timezone_info.utc_offset }} </span>
-            <b>System Timezone:&nbsp;</b> <span id='server-time'></span>
+            <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.utc_offset }} </span>
+            <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
+            <b>Value:&nbsp;</b> <span id='timezone-value'></span>
+
         </div>
 
         <div class="separate-line"></div>
@@ -46,6 +48,7 @@
             <div><b>pageHeight:&nbsp;</b> <span id='pageHeight'></span></div>
 
             <div><b>TOR:&nbsp;</b> <span id='tor'>NO</span></div>
+            <div><b>Proxy:&nbsp;</b> <span id='proxy'>NO</span></div>
             <div id="completeDevice"></div>
         </div>
 
@@ -129,7 +132,9 @@
     <script>
       var d = new Date();
       var tz = d.toString().split("GMT")[1].split(" (")[0];
-      document.getElementById('server-time').textContent = tz;
+      document.getElementById('system-time').textContent = tz;
+      if (tz == {{ location_data.utc_offset }}) document.getElementById('timezone-value').textContent = 'Timezone check correct';
+      else document.getElementById('timezone-value').textContent = 'Timezone check failed!';
     </script>
 
 
@@ -163,8 +168,9 @@
       document.getElementById('completeDevice').textContent = WURFL.complete_device_name;
 
       if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
+      if ( {{ proxy_value }} ) document.getElementById('proxy').textContent = "YES";
+
     </script>
-        {% csrf_token %}
 
     <script>
     let csrftoken = getCookie('csrftoken');
@@ -175,7 +181,6 @@
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
                 var cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
@@ -222,8 +227,9 @@
         windowInnerHeight,
         pageWidth,
         pageHeight,
-        WURFL,
-        special_values: get_special_values()
+<!--        WURFL,-->
+        special_values: get_special_values(),
+        test_hash: hash,
     }
     let config = {
         method: 'POST',
@@ -238,10 +244,7 @@
 
     </script>
 
-    <script>
 
-
-    </script>
     <style>
       .separate-line {
         margin: 20px 0;

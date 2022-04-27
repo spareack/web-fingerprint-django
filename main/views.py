@@ -11,17 +11,15 @@ from .models import User
 
 import requests
 import json
+import math
+
 
 def get_location_data(ip_address):
-    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'languages']
+    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'languages', 'timezone', 'utc_offset']
     data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+    print(data)
+
     return {key: data.get(key) for key in location_keys_list if key in data}
-
-
-def get_timezone_info(ip_address):
-    keys_list = ['timezone', 'utc_offset']
-    data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
-    return {key: data.get(key) for key in keys_list if key in data}
 
 
 def get_ip_address(data):
@@ -71,9 +69,10 @@ class HomeView(View):
     template_name = 'main/index.html'
 
     def get(self, request):
-        # print(get_token(request))
+        print(get_token(request))
         ip_address = get_ip_address(request.META)
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
+
 
         check_user = User.objects.filter(IP=ip_address)
         if check_user.exists():
@@ -81,26 +80,75 @@ class HomeView(View):
         else:
             User.objects.create(IP=ip_address, headers=params)
 
+
         location_data = get_location_data(ip_address)
 
         all_ips = get_all_ips(ip_address)
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
-        timezone_info = get_timezone_info(ip_address)
 
         # get_p0f_info(ip_address)
 
         context = {'params': params,
                    'location_data': location_data,
                    'user_agent_info': user_agent_info,
-                   'timezone_info': timezone_info,
-                   'all_ips': all_ips }
+                   'all_ips': all_ips,
+                   }
 
-        # print(request.headers)
 
         return render(request, self.template_name, context)
 
 
 class DataJs(View):
+
+    def compare_js_headers(self, current_js_data):
+        all_users = User.objects.all()
+
+        compare_results = {}
+        for user in all_users:
+            hard_compare_str = hard_compare_bool = hard_compare_int = 0
+            soft_compare_str = soft_compare_bool = soft_compare_int = 0
+            js_data = json.loads(user.js_data)
+            for js_header_key in js_data & current_js_data:
+
+                if type(js_data[js_header_key]) == 'str' and type(current_js_data[js_header_key]) == 'str':
+                    if js_data[js_header_key] == current_js_data[js_header_key]:
+                        hard_compare_str += 1
+
+                    soft_compare_str += js_data[js_header_key] & current_js_data[js_header_key]
+
+                elif type(js_data[js_header_key]) == 'bool' and type(current_js_data[js_header_key]) == 'bool':
+                    if js_data[js_header_key] == current_js_data[js_header_key]:
+                        hard_compare_bool += 1
+
+                    soft_compare_bool += js_data[js_header_key] & current_js_data[js_header_key]
+
+                elif type(js_data[js_header_key]) == 'int' and type(current_js_data[js_header_key]) == 'int':
+                    if js_data[js_header_key] == current_js_data[js_header_key]:
+                        hard_compare_int += 1
+
+                    soft_compare_int += math.fabs(js_data[js_header_key] - current_js_data[js_header_key])
+
+            hard_compare_sum = hard_compare_str + hard_compare_bool + hard_compare_int
+            soft_compare_sum = soft_compare_str + soft_compare_bool + soft_compare_int
+
+            compare_results.add(
+                {
+                    'hard_compare_str': hard_compare_str,
+                    'hard_compare_bool': hard_compare_bool,
+                    'hard_compare_int': hard_compare_int,
+                    'soft_compare_str': soft_compare_str,
+                    'soft_compare_bool': soft_compare_bool,
+                    'soft_compare_int': soft_compare_int,
+                    'hard_compare_sum': hard_compare_sum,
+                    'soft_compare_sum': soft_compare_sum,
+                    'average_compare_sum': hard_compare_sum + soft_compare_sum,
+                })
+
+        return compare_results
+
+    def handle_js_data(self, js_data):
+        compare_results = self.compare_js_headers(js_data)
+        print(compare_results)
 
     def post(self, request):
         ip_address = get_ip_address(request.META)
