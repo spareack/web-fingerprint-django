@@ -15,7 +15,7 @@ import math
 
 
 def get_location_data(ip_address):
-    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'languages', 'timezone', 'utc_offset']
+    location_keys_list = ['ip', 'city', 'country_code', 'country_name', 'languages', 'timezone', 'utc_offset', 'error']
     data = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
     print(data)
 
@@ -23,24 +23,43 @@ def get_location_data(ip_address):
 
 
 def get_ip_address(data):
-    headers_list = ['HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED',
-                    'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR']
+    headers_list = ['HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_ORIGINAL-FORWARDED-FOR', 'HTTP_X_FORWARDED_FOR',
+                    'HTTP_X_FORWARDED', 'HTTP_CF_Connecting_IP', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR',
+                    'HTTP_FORWARDED', 'REMOTE_ADDR']
 
     for header in headers_list:
         if header in data:
             return data.get(header)
 
 
-def get_all_ips(data):
-    headers_list = ['HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED',
-                    'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR']
+def get_proxy_info(data):
+    headers_list = ['HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_ORIGINAL-FORWARDED-FOR', 'HTTP_X_FORWARDED_FOR',
+                    'HTTP_X_FORWARDED', 'HTTP_CF_Connecting_IP', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR',
+                    'HTTP_FORWARDED', 'REMOTE_ADDR']
+    all_ips = {header: data.get(header) for header in headers_list if header in data}
 
-    return {header: data.get(header) for header in headers_list if header in data}
+    proxy_response = ''
+    if len(all_ips) > 1:
+        proxy_value = False
+        keys = list(all_ips.keys())
+        for i in range(1, len(all_ips.keys())):
+            if all_ips[keys[i-1]] != all_ips[keys[i]]:
+                proxy_response += '' if proxy_value else '' + f'{keys[i-1]} != {keys[i]}'
+                proxy_value = True
+
+        if proxy_value:
+            proxy_response = 'Using Proxy or Redirect connection: ' + proxy_response
+        else:
+            proxy_response += 'No Proxy or connection redirect'
+
+    return {'all_ips': all_ips, 'proxy_value': proxy_response}
 
 
 def parse_user_agent(user_agent):
     user_agent_info = parse(user_agent)
-    print(user_agent_info)
+    print(user_agent_info.browser.family)
+    print(user_agent_info.os.family)
+    print(user_agent_info.device.family)
     return str(user_agent_info)
 
 
@@ -83,7 +102,7 @@ class HomeView(View):
 
         location_data = get_location_data(ip_address)
 
-        all_ips = get_all_ips(ip_address)
+        proxy_info = get_proxy_info(ip_address)
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
 
         # get_p0f_info(ip_address)
@@ -91,9 +110,9 @@ class HomeView(View):
         context = {'params': params,
                    'location_data': location_data,
                    'user_agent_info': user_agent_info,
-                   'all_ips': all_ips,
+                   'proxy_info': proxy_info,
+                   'local': 'true' if 'error' in location_data and location_data['error'] else 'false'
                    }
-
 
         return render(request, self.template_name, context)
 
