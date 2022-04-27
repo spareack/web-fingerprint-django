@@ -11,7 +11,8 @@
     <div class="container" style="margin-top: 50px">
 
         <div>
-            <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info }} </span>
+            <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info.device_info }} </span>
+            <b>Device Info:&nbsp;</b> <span style="margin-right: 200px;"> {{ user_agent_info.device_os }} </span>
         </div>
 
         <div class="separate-line"></div>
@@ -133,8 +134,6 @@
         })
     </script>
 
-    <!--  wurfl  -->
-    <script src="//wurfl.io/wurfl.js" crossorigin></script>
 
     <!-- system time -->
     <script>
@@ -173,7 +172,6 @@
         document.getElementById('windowInnerHeight').textContent = windowInnerHeight;
         document.getElementById('pageWidth').textContent = pageWidth;
         document.getElementById('pageHeight').textContent = pageHeight;
-        document.getElementById('completeDevice').textContent = WURFL.complete_device_name;
   
         if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
         if ( !{{local}} ) document.getElementById('proxy').textContent = "{{ proxy_info.proxy_value }}";
@@ -235,7 +233,6 @@
         windowInnerHeight,
         pageWidth,
         pageHeight,
-<!--        WURFL,-->
         special_values: get_special_values(),
         test_hash: hash,
     }

@@ -57,10 +57,7 @@ def get_proxy_info(data):
 
 def parse_user_agent(user_agent):
     user_agent_info = parse(user_agent)
-    print(user_agent_info.browser.family)
-    print(user_agent_info.os.family)
-    print(user_agent_info.device.family)
-    return str(user_agent_info)
+    return {'device_info': str(user_agent_info), 'device_os': user_agent_info.os.family}
 
 
 def get_p0f_info(ip_adress):
