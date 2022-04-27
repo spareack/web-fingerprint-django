@@ -186,7 +186,7 @@ class DataJs(View):
 
             for header in spec_data:
                 if spec_data[header] == component:
-                    return user.datetime
+                    return user.datetime.strftime("%Y/%m/%d %H:%M:%S")
         return None
 
     def get_main_sum(self, request):
@@ -238,14 +238,20 @@ class DataJs(View):
                 all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
 
             response += f'<br><h6 style="display: inline">System and Server Languages are different:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}!</span>'
+                f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}</span>'
+        else:
+            response += f'<br><h6 style="display: inline">System contain Server Languages:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{system_language_main} and {location_data["languages"]}</span>'
 
         if 'utc_offset' in location_data and js_data['system_timezone'] != location_data['utc_offset']:
             response += f'<br><h6 style="display: inline">System and Server Time are different:&nbsp;</h6> ' \
                 f'<span style="margin-right: 200px;">{js_data["system_timezone"]} different' \
-                f' with {location_data["utc_offset"]} {location_data["timezone"]}!</span>'
+                f' with {location_data["utc_offset"]} {location_data["timezone"]}</span>'
+        else:
+            response += f'<br><h6 style="display: inline">System time equals Server time:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">{location_data["utc_offset"]} {location_data["timezone"]}</span>'
 
-        proxy_info = get_proxy_info(ip_address)
+        proxy_info = get_proxy_info(headers)
         response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
             f'<span style="margin-right: 200px;"> {proxy_info.get("proxy_value")}</span>'
 
