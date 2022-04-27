@@ -16,6 +16,7 @@
 
         <div class="separate-line"></div>
 
+        <!-- Fingerprint section  -->
         <div>
             <b>Canvas test Hash:&nbsp;</b> <span id='canvas-hash-test' style="margin-right: 200px;"></span>
             <canvas id='myCanvas' width='200' height='40' style='border:1px solid #000000;'></canvas><br>
@@ -24,7 +25,15 @@
 
         <div class="separate-line"></div>
 
+        <!-- Timezone section  -->
         <div>
+            <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.utc_offset }} </span>
+            <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
+            <b>Value:&nbsp;</b> <span id='timezone-value'></span>
+
+        </div>
+        <!-- Proxy section  -->
+        <div> 
             <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.utc_offset }} </span>
             <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
             <b>Value:&nbsp;</b> <span id='timezone-value'></span>
@@ -73,102 +82,101 @@
 
     <!-- canvas test-->
     <script>
-      var canvas = document.getElementById("myCanvas");
-      var ctx = canvas.getContext("2d");
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+  
+        ctx.fillStyle = "rgb(255,0,255)";
+        ctx.beginPath();
+        ctx.rect(20, 20, 150, 100);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.fillStyle = "rgb(0,255,255)";
+        ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+  
+        txt = 'abz190#$%^@£éú';
+        ctx.textBaseline = "top";
+        ctx.font = '17px "Arial 17"';
+        ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = "rgb(255,5,5)";
+        ctx.rotate(.03);
+        ctx.fillText(txt, 4, 17);
+        ctx.fillStyle = "rgb(155,255,5)";
+        ctx.shadowBlur=8;
+        ctx.shadowColor="red";
+        ctx.fillRect(20,12,100,5);
+  
+        src = canvas.toDataURL();
+        hash = 0;
+  
+        for (i = 0; i < src.length; i++) {
+            char = src.charCodeAt(i);
+            hash = ((hash<<5)-hash)+char;
+            hash = hash & hash;
+        }
 
-      ctx.fillStyle = "rgb(255,0,255)";
-      ctx.beginPath();
-      ctx.rect(20, 20, 150, 100);
-      ctx.fill();
-      ctx.stroke();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.fillStyle = "rgb(0,255,255)";
-      ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
-      ctx.fill();
-      ctx.stroke();
-      ctx.closePath();
-
-      txt = 'abz190#$%^@£éú';
-      ctx.textBaseline = "top";
-      ctx.font = '17px "Arial 17"';
-      ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "rgb(255,5,5)";
-      ctx.rotate(.03);
-      ctx.fillText(txt, 4, 17);
-      ctx.fillStyle = "rgb(155,255,5)";
-      ctx.shadowBlur=8;
-      ctx.shadowColor="red";
-      ctx.fillRect(20,12,100,5);
-
-      src = canvas.toDataURL();
-      hash = 0;
-
-      for (i = 0; i < src.length; i++) {
-          char = src.charCodeAt(i);
-          hash = ((hash<<5)-hash)+char;
-          hash = hash & hash;
-      }
-
-      document.getElementById('canvas-hash-test').textContent = hash;
+        document.getElementById('canvas-hash-test').textContent = hash;
     </script>
 
     <!-- canvas fingerprint-->
     <script>
-      let height = window.screen.height;
-      let width = window.screen.width;
-
-      const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3').then(FingerprintJS => FingerprintJS.load())
-
-      fpPromise
-        .then(fp => fp.get()).then(result => { const visitorId = result.visitorId
-          document.getElementById('canvas-hash').textContent = visitorId;
+        let height = window.screen.height;
+        let width = window.screen.width;
+        const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3').then(FingerprintJS => FingerprintJS.load())
+        fpPromise.then(fp => fp.get()).then(result => { 
+            const visitorId = result.visitorId
+            document.getElementById('canvas-hash').textContent = visitorId;
         })
     </script>
 
     <!--  wurfl  -->
     <script src="//wurfl.io/wurfl.js" crossorigin></script>
+
     <!-- system time -->
     <script>
-      var d = new Date();
-      var tz = d.toString().split("GMT")[1].split(" (")[0];
-      document.getElementById('system-time').textContent = tz;
-      if (tz == {{ location_data.utc_offset }}) document.getElementById('timezone-value').textContent = 'Timezone check correct';
-      else document.getElementById('timezone-value').textContent = 'Timezone check failed!';
+        var d = new Date();
+        var tz = d.toString().split("GMT")[1].split(" (")[0];
+        document.getElementById('system-time').textContent = tz;
+        if (!{{local}} && tz == "{{ location_data.utc_offset }}") document.getElementById('timezone-value').textContent = 'Timezone check correct';
+        else document.getElementById('timezone-value').textContent = 'Timezone check failed!';
     </script>
 
 
     <!-- Screen Size -->
     <script>
-      const screenWidth = window.screen.width
-      const screenHeight = window.screen.height;
-      const availableScreenWidth = window.screen.availWidth;
-      const availableScreenHeight = window.screen.availHeight;
-      const windowOuterWidth = window.outerWidth;
-      const windowOuterHeight = window.outerHeight;
-      const windowInnerWidthWithScroll = window.innerWidth;
-      const windowInnerHeightWithScroll = window.innerHeight;
-      const windowInnerWidth = document.documentElement.clientWidth;
-      const windowInnerHeight = document.documentElement.clientHeight;
-      const pageWidth = document.documentElement.scrollWidth;
-      const pageHeight = document.documentElement.scrollHeight;
-
-      document.getElementById('screenWidth').textContent = screenWidth;
-      document.getElementById('screenHeight').textContent = screenHeight;
-      document.getElementById('availableScreenWidth').textContent = availableScreenWidth;
-      document.getElementById('availableScreenHeight').textContent = availableScreenHeight;
-      document.getElementById('windowOuterWidth').textContent = windowOuterWidth;
-      document.getElementById('windowOuterHeight').textContent = windowOuterHeight;
-      document.getElementById('windowInnerWidthWithScroll').textContent = windowInnerWidthWithScroll;
-      document.getElementById('windowInnerHeightWithScroll').textContent = windowInnerHeightWithScroll;
-      document.getElementById('windowInnerWidth').textContent = windowInnerWidth;
-      document.getElementById('windowInnerHeight').textContent = windowInnerHeight;
-      document.getElementById('pageWidth').textContent = pageWidth;
-      document.getElementById('pageHeight').textContent = pageHeight;
-      document.getElementById('completeDevice').textContent = WURFL.complete_device_name;
-
-      if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
-      if ( {{ proxy_value }} ) document.getElementById('proxy').textContent = "YES";
+        const screenWidth = window.screen.width
+        const screenHeight = window.screen.height;
+        const availableScreenWidth = window.screen.availWidth;
+        const availableScreenHeight = window.screen.availHeight;
+        const windowOuterWidth = window.outerWidth;
+        const windowOuterHeight = window.outerHeight;
+        const windowInnerWidthWithScroll = window.innerWidth;
+        const windowInnerHeightWithScroll = window.innerHeight;
+        const windowInnerWidth = document.documentElement.clientWidth;
+        const windowInnerHeight = document.documentElement.clientHeight;
+        const pageWidth = document.documentElement.scrollWidth;
+        const pageHeight = document.documentElement.scrollHeight;
+  
+        document.getElementById('screenWidth').textContent = screenWidth;
+        document.getElementById('screenHeight').textContent = screenHeight;
+        document.getElementById('availableScreenWidth').textContent = availableScreenWidth;
+        document.getElementById('availableScreenHeight').textContent = availableScreenHeight;
+        document.getElementById('windowOuterWidth').textContent = windowOuterWidth;
+        document.getElementById('windowOuterHeight').textContent = windowOuterHeight;
+        document.getElementById('windowInnerWidthWithScroll').textContent = windowInnerWidthWithScroll;
+        document.getElementById('windowInnerHeightWithScroll').textContent = windowInnerHeightWithScroll;
+        document.getElementById('windowInnerWidth').textContent = windowInnerWidth;
+        document.getElementById('windowInnerHeight').textContent = windowInnerHeight;
+        document.getElementById('pageWidth').textContent = pageWidth;
+        document.getElementById('pageHeight').textContent = pageHeight;
+        document.getElementById('completeDevice').textContent = WURFL.complete_device_name;
+  
+        if (screenWidth == availableScreenWidth && screenHeight == availableScreenHeight) document.getElementById('tor').textContent = "YES";
+        if ( !{{local}} ) document.getElementById('proxy').textContent = "{{ proxy_info.proxy_value }}";
 
     </script>
 
@@ -246,10 +254,10 @@
 
 
     <style>
-      .separate-line {
-        margin: 20px 0;
-        border-bottom: 2px solid red;
-      }
+        .separate-line {
+            margin: 20px 0;
+            border-bottom: 2px solid red;
+        }
     </style>
 </body>
 </html>
