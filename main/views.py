@@ -31,7 +31,7 @@ def get_proxy_info(data):
                     'HTTP_FORWARDED', 'REMOTE_ADDR']
     all_ips = {header: data.get(header) for header in headers_list if header in data}
 
-    proxy_response = 'OK, one IP registered'
+    proxy_response = ''
     if len(all_ips) > 1:
         proxy_value = False
         keys = list(all_ips.keys())
@@ -44,6 +44,8 @@ def get_proxy_info(data):
             proxy_response = 'Using Proxy or Redirect connection: ' + proxy_response
         else:
             proxy_response = 'No Proxy or connection redirect'
+    else:
+        proxy_response = 'No Proxy or connection redirect'
 
     return {'all_ips': all_ips, 'proxy_value': proxy_response}
 
@@ -247,7 +249,7 @@ class DataJs(View):
                     f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}</span>'
             else:
                 response += f'<br><h6 style="display: inline">System contain Server Languages:&nbsp;</h6> ' \
-                    f'<span style="margin-right: 200px;">{system_language_main} and location_data["languages"]</span>'
+                    f'<span style="margin-right: 200px;">{system_language_main} and {location_data["languages"]}</span>'
         else:
             response += f'<br><h6 style="display: inline">System and Server Languages:&nbsp;</h6> ' \
                 f'<span style="margin-right: 200px;">IP config error</span>'
@@ -297,7 +299,7 @@ class DataJs(View):
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
-            User.objects.create(IP=ip_address, headers=json.dumps(headers),
+            User.objects.create(IP=ip_address, headers=json.dumps(request.META),
                                 js_data=json.dumps(js_spec_headers), spec_data=json.dumps(spec_data))
 
         return response
