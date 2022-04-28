@@ -198,7 +198,7 @@ class DataJs(View):
                     'average_compare_sum': hard_compare_sum + soft_compare_sum,
                 })
 
-            if hard_compare_sum > 135:
+            if hard_compare_sum > 125:
                 return user.datetime
 
         return None
@@ -330,7 +330,7 @@ class DataJs(View):
         else:
             response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No </span>'
 
-        response += f'<br><h6 style="display: inline; margin-right: 10px;">Moy Ultimate Visit Analyzer:&nbsp;</h6>'
+        response += f'<br><h6 style="display: inline; margin-right: 10px;">My Ultimate Visit Analyzer:&nbsp;</h6>'
 
         if compare_results is not None:
             response += f'<span style="margin-right: 50px;"> Maybe you always be there at {compare_results} </span>'
