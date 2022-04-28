@@ -206,7 +206,6 @@ class DataJs(View):
         compare_results = self.compare_js_headers(js_data)
 
         response = ''
-
         test_hash = js_data['test_hash']
         test_hash_visit = self.search_component(test_hash)
 
@@ -298,6 +297,10 @@ class DataJs(View):
         for result in compare_results:
             response += f'<br><h6 style="display: inline">Compare:&nbsp;</h6> ' \
                 f'<span style="margin-right: 200px;"> {result} </span>'
+
+
+        print(headers)
+        print(json.dumps(headers))
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
