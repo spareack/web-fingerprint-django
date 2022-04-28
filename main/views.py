@@ -68,7 +68,7 @@ def parse_user_agent(user_agent):
     generic = False
     mobile = user_agent_info.is_mobile or user_agent_info.is_tablet
 
-    if user_agent_info.device.family == 'Generic Smarthphone' or \
+    if user_agent_info.device.family == 'Generic Smartphone' or \
             user_agent_info.device.family == 'Generic Feature Phone' or \
             user_agent_info.device.family == 'Generic_Android_Tablet':
         generic = True
@@ -81,6 +81,7 @@ def parse_user_agent(user_agent):
     response['os_check'] = response_str
     response['generic'] = generic
     response['mobile'] = mobile
+    response['mobile_family'] = user_agent_info.device.family
     response['browser'] = user_agent_info.browser.family
 
     return response
@@ -301,10 +302,10 @@ class DataJs(View):
             if user_agent_info.get("mobile"):
                 if user_agent_info.get("generic"):
                     response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                        f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Mobile Tor Browser </span>'
+                        f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Mobile Tor Browser {user_agent_info.get("mobile_family")}</span>'
                 else:
                     response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                        f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No </span>'
+                        f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No {user_agent_info.get("mobile_family")}</span>'
 
             elif user_agent_info.get('browser') == 'Mozilla':
                 response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
