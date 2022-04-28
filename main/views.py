@@ -11,6 +11,7 @@ from .models import User
 from django.core.serializers import serialize
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings as conf_settings
 
 import requests
 import json
@@ -142,7 +143,7 @@ class HomeView(View):
 
 
 def is_tor_ip(ip):
-    with open('tor_ips.txt') as file:
+    with open(conf_settings.TOR_IPS_PATH) as file:
         all_apis = file.read()
         return ip in all_apis
 
@@ -280,8 +281,7 @@ class DataJs(View):
                     f'{location_data["utc_offset"]} {location_data["timezone"]}</span>'
 
         else:
-            response += f'<br><h6 style="display: inline; margin-right: 10px;">System time and Server time:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;" class="badge bg-danger text-white">IP config error</span>'
+            response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white">IP config error</span>'
 
         proxy_info = get_proxy_info(headers)
         response += f'<br><h6 style="display: inline; margin-right: 10px;">Proxy info:&nbsp;</h6>'
