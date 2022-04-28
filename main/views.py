@@ -35,14 +35,14 @@ def get_proxy_info(data):
     all_ips = {header: data.get(header) for header in headers_list if header in data}
 
     proxy_response = ''
+    proxy_value = False
+
     if len(all_ips) > 1:
-        proxy_value = False
         keys = list(all_ips.keys())
         for i in range(1, len(all_ips.keys())):
             if all_ips[keys[i - 1]] != all_ips[keys[i]]:
-                proxy_response += '' if proxy_value else '' + f'{keys[i - 1]} != {keys[i]}'
+                proxy_response += '' if proxy_value else '' + f'{keys[i - 1]} != {keys[i]} ({all_ips[keys[i - 1]]} != {all_ips[keys[i]]})'
                 proxy_value = True
-
         if proxy_value:
             proxy_response = 'Using Proxy or Redirect connection: ' + proxy_response
         else:
@@ -50,7 +50,7 @@ def get_proxy_info(data):
     else:
         proxy_response = 'No Proxy or connection redirect'
 
-    return {'all_ips': all_ips, 'proxy_value': proxy_response}
+    return {'all_ips': all_ips, 'proxy_value': proxy_response, 'proxy_bool': proxy_value}
 
 
 def get_location_data(ip_address):
@@ -68,7 +68,7 @@ def parse_user_agent(user_agent):
     generic = False
     mobile = user_agent_info.is_mobile or user_agent_info.is_tablet
 
-    if mobile or user_agent_info.device.family == 'Generic Smartphone' or \
+    if user_agent_info.device.family == 'Generic Smartphone' or \
             user_agent_info.device.family == 'Generic Feature Phone' or \
             user_agent_info.device.family == 'Generic_Android_Tablet':
         generic = True
@@ -156,19 +156,19 @@ class DataJs(View):
                         if js_data[js_header_key] == current_js_data[js_header_key]:
                             hard_compare_str += 1
 
-                        soft_compare_str += js_data[js_header_key] & current_js_data[js_header_key]
+                        # soft_compare_str += js_data[js_header_key] & current_js_data[js_header_key]
 
                     elif type(js_data[js_header_key]) == bool and type(current_js_data[js_header_key]) == bool:
                         if js_data[js_header_key] == current_js_data[js_header_key]:
                             hard_compare_bool += 1
 
-                        soft_compare_bool += js_data[js_header_key] & current_js_data[js_header_key]
+                        # soft_compare_bool += js_data[js_header_key] & current_js_data[js_header_key]
 
                     elif type(js_data[js_header_key]) == int and type(current_js_data[js_header_key]) == int:
                         if js_data[js_header_key] == current_js_data[js_header_key]:
                             hard_compare_int += 1
 
-                        soft_compare_int += math.fabs(js_data[js_header_key] - current_js_data[js_header_key])
+                        # soft_compare_int += math.fabs(js_data[js_header_key] - current_js_data[js_header_key])
 
             hard_compare_sum = hard_compare_str + hard_compare_bool + hard_compare_int
             soft_compare_sum = soft_compare_str + soft_compare_bool + soft_compare_int
@@ -206,11 +206,12 @@ class DataJs(View):
         headers = {key: request.META.get(key) for key in request.META if 'wsgi' not in key.lower() and type(request.META[key]) in [str, int, bool]}
         js_data = json.loads(request.body)
         js_spec_headers = js_data['special_values']
-        compare_results = self.compare_js_headers(js_data)
+        compare_results = self.compare_js_headers(js_spec_headers)
 
         response = ''
         test_hash = js_data['test_hash']
         test_hash_visit = self.search_component(test_hash)
+        vpn_check = False
 
         if test_hash_visit is not None:
             response += f'<h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
@@ -248,54 +249,72 @@ class DataJs(View):
             if system_language_main.lower() not in location_data['languages'].lower() and \
                     all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
 
-                response += f'<br><h6 style="display: inline">System and Server Languages are different:&nbsp;</h6> ' \
+                response += f'<br><h6 style="display: inline" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</h6> ' \
                     f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}</span>'
             else:
-                response += f'<br><h6 style="display: inline">System contain Server Languages:&nbsp;</h6> ' \
+                response += f'<br><h6 style="display: inline" class="badge bg-success text-white">System contain Server Languages:&nbsp;</h6> ' \
                     f'<span style="margin-right: 200px;">{system_language_main} and {location_data["languages"]}</span>'
         else:
             response += f'<br><h6 style="display: inline">System and Server Languages:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">IP config error</span>'
+                f'<span style="margin-right: 200px;" class="badge bg-danger text-white">IP config error</span>'
 
         if 'utc_offset' in location_data:
             if js_data['system_timezone'] != location_data['utc_offset']:
-                response += f'<br><h6 style="display: inline">System and Server Time are different:&nbsp;</h6> ' \
+                vpn_check = True
+                response += f'<br><h6 style="display: inline" class="badge bg-danger text-white">System and Server Time are different:&nbsp;</h6> ' \
                     f'<span style="margin-right: 200px;">{js_data["system_timezone"]} different' \
                     f' with {location_data["utc_offset"]} {location_data["timezone"]}</span>'
             else:
-                response += f'<br><h6 style="display: inline">System time equals Server time:&nbsp;</h6> ' \
+                response += f'<br><h6 style="display: inline" class="badge bg-success text-white">System time equals Server time:&nbsp;</h6> ' \
                     f'<span style="margin-right: 200px;">{location_data["utc_offset"]} {location_data["timezone"]}</span>'
         else:
             response += f'<br><h6 style="display: inline">System time and Server time:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">IP config error</span>'
+                f'<span style="margin-right: 200px;" class="badge bg-danger text-white">IP config error</span>'
 
         proxy_info = get_proxy_info(headers)
 
-        response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
-            f'<span style="margin-right: 200px;"> {proxy_info.get("proxy_value")}</span>'
+        if proxy_info.get('proxy_bool'):
+            response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> {proxy_info.get("proxy_value")}</span>'
+        else:
+            response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;" class="badge bg-success text-white"> {proxy_info.get("proxy_value")}</span>'
 
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
-        response += f'<br><h6 style="display: inline">Device info:&nbsp;</h6> ' \
-            f'<span style="margin-right: 200px;"> {user_agent_info.get("os_check")}</span>'
 
-        if js_spec_headers.get('screenWidth2') == js_spec_headers.get('availWidth') and \
-                js_spec_headers.get('screenHeight2') == js_spec_headers.get('availHeight'):
+        if user_agent_info.get('generic'):
+            response += f'<br><h6 style="display: inline">Device info:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> {user_agent_info.get("os_check")}</span>'
+        else:
+            response += f'<br><h6 style="display: inline">Device info:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;" class="badge bg-success text-white"> {user_agent_info.get("os_check")}</span>'
+
+        if vpn_check:
+            response += f'<br><h6 style="display: inline">VPN connect:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Yes, IP configuration not suitable with system</span>'
+        else:
+            response += f'<br><h6 style="display: inline">VPN connect:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No</span>'
+
+        if js_data.get('screenWidth2') == js_spec_headers.get('availWidth') and \
+                js_data.get('screenHeight2') == js_spec_headers.get('availHeight'):
             if user_agent_info.get("mobile"):
                 if user_agent_info.get("generic"):
                     response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                        f'<span style="margin-right: 200px;"> Mobile Tor Browser </span>'
+                        f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Mobile Tor Browser </span>'
                 else:
                     response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                        f'<span style="margin-right: 200px;"> No </span>'
+                        f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No </span>'
+
             elif user_agent_info.get('browser') == 'Mozilla':
                 response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                    f'<span style="margin-right: 200px;"> Yes (screen test + browser family) </span>'
+                    f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Yes (screen test + browser family) </span>'
             else:
                 response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                    f'<span style="margin-right: 200px;"> Yes (screen test) </span>'
+                    f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Yes (screen test) </span>'
         else:
             response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;"> No </span>'
+                f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No </span>'
 
         for result in compare_results:
             response += f'<br><h6 style="display: inline">Compare:&nbsp;</h6> ' \
