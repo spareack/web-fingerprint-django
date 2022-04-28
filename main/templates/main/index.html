@@ -24,9 +24,9 @@
             <div class="collapse show" id="collapseExample1">
                 <div class="card-body">
                     <h6>Device Info:&nbsp;</h6> <span style="margin-right: 200px;"> {{ user_agent_info.device_info }} </span>
-                    <h6>sum:&nbsp;</h6> <span style="margin-right: 200px;"> {{ user_agent_info.os_check }} </span>
+                    <!-- <h6>sum:&nbsp;</h6> <span style="margin-right: 200px;"> {{ user_agent_info.os_check }} </span>
                     <div>TOR:&nbsp; <span id='tor'>NO</span></div>
-                    <div>Proxy:&nbsp; <span id='proxy'>NO</span></div>
+                    <div>Proxy:&nbsp; <span id='proxy'>NO</span></div> -->
                 </div>
             </div>
         </div>
@@ -49,7 +49,6 @@
             <div class="collapse show" id="collapseExample3">
                 <div class="card-body">
                     <b>Server Timezone:&nbsp;</b> <span style="margin-right: 100px;"> {{ location_data.timezone }}: {{ location_data.utc_offset }} </span>
-                    
                     <b>System Timezone:&nbsp;</b> <span id='system-time' style="margin-right: 100px;"></span>
                     <b>Value:&nbsp;</b> <span id='timezone-value'></span>
                 </div>
@@ -63,7 +62,8 @@
                     {% for key, value in proxy_info.all_ips.items %}
                         <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
                     {% endfor %}
-                    <b>Сonclusion:&nbsp;</b> <span style="margin-right: 100px;"> {{ proxy_info.proxy_value }} </span>
+                    <!-- <b>Сonclusion:&nbsp;</b> <span style="margin-right: 100px;"> {{ proxy_info.proxy_value }} </span> -->
+                    <b>Сonclusion:&nbsp;</b> <span style="margin-right: 100px;">  </span>
                 </div>
             </div>
         </div>
@@ -103,9 +103,19 @@
 
         <div class="card border-danger mb-3">
             <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample7" aria-expanded="false" aria-controls="collapseExample">
-                All Headers </div>
+                All JS params </div>
             <div class="collapse show" id="collapseExample7">
                 <div class="card-body">
+                    <div id="js-params" style="line-height: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-danger mb-3">
+            <div class="card-header text-white bg-head mb-3 margin0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample8" aria-expanded="false" aria-controls="collapseExample">
+                All HTTP Headers </div>
+            <div class="collapse show" id="collapseExample8">
+                <div class="card-body" style="line-height: 20px;">
                     {% for key, value in params.items %}
                         <p><strong>{{ key }}:</strong> &nbsp; {{ value }}</p>
                     {% endfor %}
@@ -253,6 +263,12 @@
         }
 
         get_iter_objects("-1", window)
+
+
+        for(var key in slovar) {
+            document.getElementById('js-params').innerHTML += "<p><strong>" + key + ":</strong> &nbsp;" + slovar[key] + "</p>"
+        }
+
         return slovar
     }
 
