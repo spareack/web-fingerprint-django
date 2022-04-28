@@ -299,10 +299,13 @@ class DataJs(View):
                 f'<span style="margin-right: 200px;"> {result} </span>'
 
         for i in headers:
-            print(i)
+            print(i, headers[i])
 
-        for i in json.dumps(headers):
-            print(i)
+        print('!!!!!!')
+        lst = json.dumps(headers)
+
+        for i in lst:
+            print(i, lst[i])
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
