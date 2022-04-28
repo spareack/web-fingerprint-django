@@ -237,7 +237,13 @@
                     if (used_keys.indexOf(key) == -1)
                     {
                         used_keys.push(key)
-                        get_iter_objects(key, obj[key])
+                        console.log(key)
+                        try {
+                            get_iter_objects(key, obj[key])
+                        }
+                        catch {
+
+                        }
                     }
                 }
             }
