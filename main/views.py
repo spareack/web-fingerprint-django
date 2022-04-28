@@ -298,9 +298,11 @@ class DataJs(View):
             response += f'<br><h6 style="display: inline">Compare:&nbsp;</h6> ' \
                 f'<span style="margin-right: 200px;"> {result} </span>'
 
+        for i in headers:
+            print(i)
 
-        print(headers)
-        print(json.dumps(headers))
+        for i in json.dumps(headers):
+            print(i)
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
