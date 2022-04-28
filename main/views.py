@@ -198,7 +198,7 @@ class DataJs(View):
                         'average_compare_sum': hard_compare_sum + soft_compare_sum,
                     })
 
-                if hard_compare_sum > len(js_data) * 0.8:
+                if hard_compare_sum > len(js_data) * 0.5:
                     return user.datetime
 
         return None
