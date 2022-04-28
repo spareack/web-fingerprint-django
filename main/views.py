@@ -200,7 +200,7 @@ class DataJs(View):
 
     def get_main_sum(self, request):
 
-        headers = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
+        headers = {key: request.META.get(key) for key in request.META if 'wsgi' not in key.lower() and type(key) in [str, int, bool]}
         js_data = json.loads(request.body)
         js_spec_headers = js_data['special_values']
         compare_results = self.compare_js_headers(js_data)
