@@ -200,7 +200,7 @@ class DataJs(View):
 
     def get_main_sum(self, request):
 
-        headers = {key: request.META.get(key) for key in request.META if 'wsgi' not in key.lower() and type(key) in [str, int, bool]}
+        headers = {key: request.META.get(key) for key in request.META if 'wsgi' not in key.lower() and type(request.META[key]) in [str, int, bool]}
         js_data = json.loads(request.body)
         js_spec_headers = js_data['special_values']
         compare_results = self.compare_js_headers(js_data)
@@ -300,12 +300,6 @@ class DataJs(View):
 
         for i in headers:
             print(i, headers[i])
-
-        print('!!!!!!')
-        lst = json.dumps(headers)
-
-        for i in lst:
-            print(i, lst[i])
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
