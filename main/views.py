@@ -31,7 +31,7 @@ def get_proxy_info(data):
                     'HTTP_FORWARDED', 'REMOTE_ADDR']
     all_ips = {header: data.get(header) for header in headers_list if header in data}
 
-    proxy_response = ''
+    proxy_response = 'OK, one IP registered'
     if len(all_ips) > 1:
         proxy_value = False
         keys = list(all_ips.keys())
@@ -58,20 +58,26 @@ def get_location_data(ip_address):
 
 def parse_user_agent(user_agent):
     user_agent_info = parse(user_agent)
-
     response = {'device_info': str(user_agent_info), 'device_os': user_agent_info.device.family}
-
     response_str = 'User Agent seems valid'
+    generic = False
+    mobile = user_agent_info.is_mobile or user_agent_info.is_tablet
 
-    if user_agent_info.device.family == 'Generic Smartphone' or \
+    if mobile or user_agent_info.device.family == 'Generic Smartphone' or \
             user_agent_info.device.family == 'Generic Feature Phone' or \
             user_agent_info.device.family == 'Generic_Android_Tablet':
+        generic = True
+
         if user_agent_info.browser.family == 'Firefox':
             response_str = 'trying to secure mobile device, Tor browser'
         else:
             response_str = 'trying to secure mobile device, more likely tor browser'
 
     response['os_check'] = response_str
+    response['generic'] = generic
+    response['mobile'] = mobile
+    response['browser'] = user_agent_info.browser.family
+
     return response
 
 
@@ -103,11 +109,11 @@ class HomeView(View):
         ip_address = get_ip_address(request.META)
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
-        check_user = User.objects.filter(IP=ip_address)
-        if check_user.exists():
-            check_user.update(headers=params)
-        else:
-            User.objects.create(IP=ip_address, headers=params)
+        # check_user = User.objects.filter(IP=ip_address)
+        # if check_user.exists():
+        #     check_user.update(headers=params)
+        # else:
+        #     User.objects.create(IP=ip_address, headers=params)
 
         location_data = get_location_data(ip_address)
         proxy_info = get_proxy_info(ip_address)
@@ -190,12 +196,11 @@ class DataJs(View):
         return None
 
     def get_main_sum(self, request):
-        # compare_results = self.compare_js_headers(js_data)
-        # print(compare_results)
 
         headers = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
         js_data = json.loads(request.body)
         js_spec_headers = js_data['special_values']
+        compare_results = self.compare_js_headers(js_data)
 
         response = ''
 
@@ -204,10 +209,10 @@ class DataJs(View):
 
         if test_hash_visit is not None:
             response += f'<h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{test_hash}: Same hash visit at {test_hash_visit}</span>'
+                f'<span style="margin-right: 200px;">{test_hash}: <span class="badge bg-danger text-white"> Same hash visit at {test_hash_visit}</span></span>'
         else:
             response += f'<br><h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{test_hash}: First Entry</span>'
+                f'<span style="margin-right: 200px;">{test_hash}: <span class="badge bg-success text-white"> First Entry</span></span>'
 
         # print(js_data)
         fingerprint = js_data['fingerprint_js']
@@ -215,41 +220,49 @@ class DataJs(View):
 
         if fingerprint_visit is not None:
             response += f'<br><h6 style="display: inline">Fingerprint Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{fingerprint}: Same fingerprint at {fingerprint_visit}</span>'
+                f'<span style="margin-right: 200px;">{fingerprint}: <span class="badge bg-danger text-white"> Same fingerprint at {fingerprint_visit}</span></span>'
         else:
             response += f'<br><h6 style="display: inline">Fingerprint Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{fingerprint}: First Entry</span>'
+                f'<span style="margin-right: 200px;">{fingerprint}: <span class="badge bg-success text-white"> First Entry </span></span>'
 
         ip_address = get_ip_address(request.META)
         ip_address_visit = self.search_component(ip_address)
 
         if ip_address_visit is not None:
             response += f'<br><h6 style="display: inline">IP address:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{ip_address}: Same address at {ip_address_visit}</span>'
+                f'<span style="margin-right: 200px;">{ip_address}: <span class="badge bg-danger text-white"> Same address at {ip_address_visit}</span></span>'
         else:
             response += f'<br><h6 style="display: inline">IP address:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{ip_address}: First Entry</span>'
+                f'<span style="margin-right: 200px;">{ip_address}: <span class="badge bg-success text-white"> First Entry </span></span>'
 
         location_data = get_location_data(ip_address)
         system_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         system_language_main = js_spec_headers.get('language')
 
-        if 'languages' in location_data and system_language_main.lower() not in location_data['languages'].lower() and \
-                all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
+        if 'languages' in location_data:
+            if system_language_main.lower() not in location_data['languages'].lower() and \
+                    all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
 
-            response += f'<br><h6 style="display: inline">System and Server Languages are different:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}</span>'
+                response += f'<br><h6 style="display: inline">System and Server Languages are different:&nbsp;</h6> ' \
+                    f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}</span>'
+            else:
+                response += f'<br><h6 style="display: inline">System contain Server Languages:&nbsp;</h6> ' \
+                    f'<span style="margin-right: 200px;">{system_language_main} and location_data["languages"]</span>'
         else:
-            response += f'<br><h6 style="display: inline">System contain Server Languages:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{system_language_main} and {location_data["languages"]}</span>'
+            response += f'<br><h6 style="display: inline">System and Server Languages:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">IP config error</span>'
 
-        if 'utc_offset' in location_data and js_data['system_timezone'] != location_data['utc_offset']:
-            response += f'<br><h6 style="display: inline">System and Server Time are different:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{js_data["system_timezone"]} different' \
-                f' with {location_data["utc_offset"]} {location_data["timezone"]}</span>'
+        if 'utc_offset' in location_data:
+            if js_data['system_timezone'] != location_data['utc_offset']:
+                response += f'<br><h6 style="display: inline">System and Server Time are different:&nbsp;</h6> ' \
+                    f'<span style="margin-right: 200px;">{js_data["system_timezone"]} different' \
+                    f' with {location_data["utc_offset"]} {location_data["timezone"]}</span>'
+            else:
+                response += f'<br><h6 style="display: inline">System time equals Server time:&nbsp;</h6> ' \
+                    f'<span style="margin-right: 200px;">{location_data["utc_offset"]} {location_data["timezone"]}</span>'
         else:
-            response += f'<br><h6 style="display: inline">System time equals Server time:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{location_data["utc_offset"]} {location_data["timezone"]}</span>'
+            response += f'<br><h6 style="display: inline">System time and Server time:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;">IP config error</span>'
 
         proxy_info = get_proxy_info(headers)
         response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
@@ -259,17 +272,40 @@ class DataJs(View):
         response += f'<br><h6 style="display: inline">Device info:&nbsp;</h6> ' \
             f'<span style="margin-right: 200px;"> {user_agent_info.get("os_check")}</span>'
 
+        if js_spec_headers.get('screenWidth2') == js_spec_headers.get('availWidth') and \
+                js_spec_headers.get('screenHeight2') == js_spec_headers.get('availHeight'):
+            if user_agent_info.get("mobile"):
+                if user_agent_info.get("generic"):
+                    response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
+                        f'<span style="margin-right: 200px;"> Mobile Tor Browser </span>'
+                else:
+                    response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
+                        f'<span style="margin-right: 200px;"> No </span>'
+            elif user_agent_info.get('browser') == 'Mozilla':
+                response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
+                    f'<span style="margin-right: 200px;"> Yes (screen test + browser family) </span>'
+            else:
+                response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
+                    f'<span style="margin-right: 200px;"> Yes (screen test) </span>'
+        else:
+            response += f'<br><h6 style="display: inline">Tor browser:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;"> No </span>'
+
+        for result in compare_results:
+            response += f'<br><h6 style="display: inline">Compare:&nbsp;</h6> ' \
+                f'<span style="margin-right: 200px;"> {result} </span>'
+
+        if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
+            spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
+            User.objects.create(IP=ip_address, headers=json.dumps(headers),
+                                js_data=json.dumps(js_spec_headers), spec_data=json.dumps(spec_data))
+
         return response
 
     def post(self, request):
 
         response = self.get_main_sum(request)
 
-        # check_user = User.objects.filter(IP=ip_address)
-        # if check_user.exists():
-        #     check_user.update(js_data=json.dumps(js_data))
-        # else:
-        #     User.objects.create(IP=ip_address, js_data=json.dumps(js_data))
 
         return HttpResponse(response)
 

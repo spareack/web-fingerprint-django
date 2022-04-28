@@ -158,13 +158,9 @@
 
     <!-- canvas fingerprint-->
     <script>
-        let height = window.screen.height;
-        let width = window.screen.width;
-        let visitorId = '';
         const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3').then(FingerprintJS => FingerprintJS.load())
         fpPromise.then(fp => fp.get()).then(result => { 
-            visitorId = result.visitorId;
-            document.getElementById('canvas-hash').textContent = visitorId;
+            document.getElementById('canvas-hash').textContent = result.visitorId;
         })
     </script>
 
@@ -254,26 +250,35 @@
         return slovar
     }
 
-    let data = {
-        special_values: get_special_values(),
-        test_hash: hash,
-        fingerprint_js: document.getElementById('canvas-hash').textContent,
-        system_timezone: tz,
-    }
-
-    let config = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            "X-CSRFToken": csrftoken,
-        },
-        body: JSON.stringify(data),
-    }
-            
-    fetch('/set_secret_data', config).then(response => { return response.text().then(function(text) {
-        document.getElementById('main_section').innerHTML = text; 
-        })
+    fpPromise.then(fp => fp.get()).then(result => {
+        send_data(result.visitorId); 
     })
+    
+    function send_data(fingerprint)
+    {
+        let data = {
+            special_values: get_special_values(),
+            test_hash: hash,
+            fingerprint_js: fingerprint,
+            system_timezone: tz,
+            screenWidth2: screenWidth,
+            screenHeight2: screenHeight,
+        }
+
+        let config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify(data),
+        }
+                
+        fetch('/set_secret_data', config).then(response => { return response.text().then(function(text) {
+                document.getElementById('main_section').innerHTML = text; 
+            })
+        })
+    }
     
     </script>
 
