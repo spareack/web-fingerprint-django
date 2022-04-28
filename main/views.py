@@ -68,7 +68,7 @@ def parse_user_agent(user_agent):
     generic = False
     mobile = user_agent_info.is_mobile or user_agent_info.is_tablet
 
-    if user_agent_info.device.family == 'Generic Smartphone' or \
+    if user_agent_info.device.family == 'Generic Smarthphone' or \
             user_agent_info.device.family == 'Generic Feature Phone' or \
             user_agent_info.device.family == 'Generic_Android_Tablet':
         generic = True
