@@ -182,24 +182,24 @@ class DataJs(View):
 
                         # soft_compare_int += math.fabs(js_data[js_header_key] - current_js_data[js_header_key])
 
-            hard_compare_sum = hard_compare_str + hard_compare_bool + hard_compare_int
-            soft_compare_sum = soft_compare_str + soft_compare_bool + soft_compare_int
+                hard_compare_sum = hard_compare_str + hard_compare_bool + hard_compare_int
+                soft_compare_sum = soft_compare_str + soft_compare_bool + soft_compare_int
 
-            compare_results.append(
-                {
-                    'hard_compare_str': hard_compare_str,
-                    'hard_compare_bool': hard_compare_bool,
-                    'hard_compare_int': hard_compare_int,
-                    'soft_compare_str': soft_compare_str,
-                    'soft_compare_bool': soft_compare_bool,
-                    'soft_compare_int': soft_compare_int,
-                    'hard_compare_sum': hard_compare_sum,
-                    'soft_compare_sum': soft_compare_sum,
-                    'average_compare_sum': hard_compare_sum + soft_compare_sum,
-                })
+                compare_results.append(
+                    {
+                        'hard_compare_str': hard_compare_str,
+                        'hard_compare_bool': hard_compare_bool,
+                        'hard_compare_int': hard_compare_int,
+                        'soft_compare_str': soft_compare_str,
+                        'soft_compare_bool': soft_compare_bool,
+                        'soft_compare_int': soft_compare_int,
+                        'hard_compare_sum': hard_compare_sum,
+                        'soft_compare_sum': soft_compare_sum,
+                        'average_compare_sum': hard_compare_sum + soft_compare_sum,
+                    })
 
-            if hard_compare_sum > 125:
-                return user.datetime
+                if hard_compare_sum > len(js_data) * 0.8:
+                    return user.datetime
 
         return None
 
