@@ -302,8 +302,7 @@ class DataJs(View):
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
 
-            headers_json = serialize('json', headers)
-            User.objects.create(IP=ip_address, headers=headers_json,
+            User.objects.create(IP=ip_address, headers=json.dumps(headers),
                                 js_data=json.dumps(js_spec_headers), spec_data=json.dumps(spec_data))
 
         return response
