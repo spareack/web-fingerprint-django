@@ -227,10 +227,10 @@ class DataJs(View):
 
         if test_hash_visit is not None:
             response += f'<h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{test_hash}: <span class="badge bg-danger text-white"> Same hash visit at {test_hash_visit}</span></span>'
+                f'<span style="margin-right: 50px;">{test_hash}: <span class="badge bg-danger text-white"> Same hash visit at {test_hash_visit}</span></span>'
         else:
             response += f'<br><h6 style="display: inline">Canvas Hash Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{test_hash}: <span class="badge bg-success text-white"> First Entry</span></span>'
+                f'<span style="margin-right: 50px;">{test_hash}: <span class="badge bg-success text-white"> First Entry</span></span>'
 
         # print(js_data)
         fingerprint = js_data['fingerprint_js']
@@ -238,50 +238,51 @@ class DataJs(View):
 
         if fingerprint_visit is not None:
             response += f'<br><h6 style="display: inline">Fingerprint Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{fingerprint}: <span class="badge bg-danger text-white"> Same fingerprint at {fingerprint_visit}</span></span>'
+                f'<span style="margin-right: 50px;">{fingerprint}: <span class="badge bg-danger text-white"> Same fingerprint at {fingerprint_visit}</span></span>'
         else:
             response += f'<br><h6 style="display: inline">Fingerprint Test:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{fingerprint}: <span class="badge bg-success text-white"> First Entry </span></span>'
+                f'<span style="margin-right: 50px;">{fingerprint}: <span class="badge bg-success text-white"> First Entry </span></span>'
 
         ip_address = get_ip_address(request.META)
         ip_address_visit = self.search_component(ip_address)
 
         if ip_address_visit is not None:
             response += f'<br><h6 style="display: inline; margin-right: 10px;">IP address:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{ip_address}: <span class="badge bg-danger text-white"> Same address at {ip_address_visit}</span></span>'
+                f'<span style="margin-right: 50px;">{ip_address}: <span class="badge bg-danger text-white"> Same address at {ip_address_visit}</span></span>'
         else:
             response += f'<br><h6 style="display: inline; margin-right: 10px;">IP address:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;">{ip_address}: <span class="badge bg-success text-white"> First Entry </span></span>'
+                f'<span style="margin-right: 50px;">{ip_address}: <span class="badge bg-success text-white"> First Entry </span></span>'
 
         location_data = get_location_data(ip_address)
         system_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         system_language_main = js_spec_headers.get('language')
 
+        response += f'<br><h6 style="display: inline; margin-right: 10px;" class="">System and Server Languages:&nbsp;</h6>'
         if 'languages' in location_data:
             if system_language_main.lower() not in location_data['languages'].lower() and \
                     all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
 
                 response += f'<br><h6 style="display: inline; margin-right: 10px;" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</h6> ' \
-                    f'<span style="margin-right: 200px;">{system_language_main} not in {location_data["languages"]}</span>'
+                    f'<span style="margin-right: 50px;">{system_language_main} not in {location_data["languages"]}</span>'
             else:
                 response += f'<br><h6 style="display: inline; margin-right: 10px;" class="badge bg-success text-white">System contain Server Languages:&nbsp;</h6> ' \
-                    f'<span style="margin-right: 200px;">{system_language_main} and {location_data["languages"]}</span>'
+                    f'<span style="margin-right: 50px;">{system_language_main} and {location_data["languages"]}</span>'
         else:
             response += f'<br><h6 style="display: inline; margin-right: 10px;">System and Server Languages:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;" class="badge bg-danger text-white">IP config error</span>'
+                f'<span style="margin-right: 50px;" class="badge bg-danger text-white">IP config error</span>'
 
         response += f'<br><h6 style="display: inline; margin-right: 10px;" class="">System and Server Time:&nbsp;</h6>'
         if 'utc_offset' in location_data:
             if js_data['system_timezone'] != location_data['utc_offset']:
                 vpn_check = True
-                response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white">System and Server Time are different:&nbsp;</span> ' \
+                response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white">System and Server Time are different:&nbsp;</span> ' \
                     f'{js_data["system_timezone"]} different with {location_data["utc_offset"]} {location_data["timezone"]}</span>'
             else:
-                response += f'<span style="margin-right: 200px;" class="badge bg-success text-white">System time equals Server time:&nbsp;</span> ' \
+                response += f'<span style="margin-right: 50px;" class="badge bg-success text-white">System time equals Server time:&nbsp;</span> ' \
                     f'{location_data["utc_offset"]} {location_data["timezone"]}</span>'
 
         else:
-            response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white">IP config error</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white">IP config error</span>'
 
         proxy_info = get_proxy_info(headers)
         response += f'<br><h6 style="display: inline; margin-right: 10px;">Proxy info:&nbsp;</h6>'
@@ -292,44 +293,44 @@ class DataJs(View):
             response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> {proxy_info.get("proxy_value")}</span>'
 
         if proxy_info.get('proxy_headers'):
-            response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Proxy Headers Detected! </span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Proxy Headers Detected! </span>'
         else:
-            response += f'<span style="margin-right: 200px;" class="badge bg-success text-white"> but There is no proxy headers </span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> but There is no proxy headers </span>'
 
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
         response += f'<br><h6 style="display: inline; margin-right: 10px;">Device info:&nbsp;</h6>'
         if user_agent_info.get('generic'):
-            response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> {user_agent_info.get("os_check")}</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> {user_agent_info.get("os_check")}</span>'
         else:
-            response += f'<span style="margin-right: 200px;" class="badge bg-success text-white"> {user_agent_info.get("os_check")}</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> {user_agent_info.get("os_check")}</span>'
 
         response += f'<br><h6 style="display: inline; margin-right: 10px;">VPN connect:&nbsp;</h6>'
         if vpn_check:
-            response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Yes, IP configuration not suitable with system</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Yes, IP configuration not suitable with system</span>'
         else:
-            response += f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No</span>'
 
         response += f'<br><h6 style="display: inline; margin-right: 10px;">Tor browser:&nbsp;</h6>'
         if is_tor_ip(ip_address):
-            response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Tor IP Detected {ip_address}</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Tor IP Detected {ip_address}</span>'
 
         if js_data.get('screenWidth2') == js_spec_headers.get('availWidth') and \
                 js_data.get('screenHeight2') == js_spec_headers.get('availHeight'):
             if user_agent_info.get("mobile"):
                 if user_agent_info.get("generic"):
-                    response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Mobile Tor Browser {user_agent_info.get("mobile_family")}</span>'
+                    response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Mobile Tor Browser {user_agent_info.get("mobile_family")}</span>'
                 else:
-                    response += f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No {user_agent_info.get("mobile_family")}</span>'
+                    response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No {user_agent_info.get("mobile_family")}</span>'
             elif user_agent_info.get('browser') == 'Mozilla':
-                response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Yes (screen test + browser family) </span>'
+                response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Yes (screen test + browser family) </span>'
             else:
-                response += f'<span style="margin-right: 200px;" class="badge bg-danger text-white"> Yes (screen test) </span>'
+                response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Yes (screen test) </span>'
         else:
-            response += f'<span style="margin-right: 200px;" class="badge bg-success text-white"> No </span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No </span>'
 
         for result in compare_results:
             response += f'<br><h6 style="display: inline; margin-right: 10px;">Compare:&nbsp;</h6> ' \
-                f'<span style="margin-right: 200px;"> {result} </span>'
+                f'<span style="margin-right: 50px;"> {result} </span>'
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
