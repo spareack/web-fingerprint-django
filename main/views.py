@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from .models import User
+from django.core.serializers import serialize
 
 import requests
 import json
@@ -267,6 +268,7 @@ class DataJs(View):
                 f'<span style="margin-right: 200px;">IP config error</span>'
 
         proxy_info = get_proxy_info(headers)
+
         response += f'<br><h6 style="display: inline">Proxy info:&nbsp;</h6> ' \
             f'<span style="margin-right: 200px;"> {proxy_info.get("proxy_value")}</span>'
 
@@ -299,7 +301,9 @@ class DataJs(View):
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
-            User.objects.create(IP=ip_address, headers=json.dumps(request.META),
+
+            headers_json = serialize('json', headers)
+            User.objects.create(IP=ip_address, headers=headers_json,
                                 js_data=json.dumps(js_spec_headers), spec_data=json.dumps(spec_data))
 
         return response
