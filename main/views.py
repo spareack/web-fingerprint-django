@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from .models import User
 from django.core.serializers import serialize
+from django.views.decorators.csrf import csrf_exempt
 
 import requests
 import json
@@ -133,7 +134,7 @@ class HomeView(View):
 
         return render(request, self.template_name, context)
 
-
+@csrf_exempt
 class DataJs(View):
 
     def compare_js_headers(self, current_js_data):
