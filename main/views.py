@@ -187,18 +187,21 @@ class DataJs(View):
 
             compare_results.append(
                 {
-                    # 'hard_compare_str': hard_compare_str,
-                    # 'hard_compare_bool': hard_compare_bool,
-                    # 'hard_compare_int': hard_compare_int,
-                    # 'soft_compare_str': soft_compare_str,
-                    # 'soft_compare_bool': soft_compare_bool,
-                    # 'soft_compare_int': soft_compare_int,
+                    'hard_compare_str': hard_compare_str,
+                    'hard_compare_bool': hard_compare_bool,
+                    'hard_compare_int': hard_compare_int,
+                    'soft_compare_str': soft_compare_str,
+                    'soft_compare_bool': soft_compare_bool,
+                    'soft_compare_int': soft_compare_int,
                     'hard_compare_sum': hard_compare_sum,
                     'soft_compare_sum': soft_compare_sum,
-                    # 'average_compare_sum': hard_compare_sum + soft_compare_sum,
+                    'average_compare_sum': hard_compare_sum + soft_compare_sum,
                 })
 
-        return compare_results
+            if hard_compare_sum > 135:
+                return user.datetime
+
+        return None
 
     def search_component(self, component):
         all_users = User.objects.all()
@@ -262,14 +265,13 @@ class DataJs(View):
             if system_language_main.lower() not in location_data['languages'].lower() and \
                     all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
 
-                response += f'<br><h6 style="display: inline; margin-right: 10px;" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</h6> ' \
+                response += f'<span> style="display: inline; margin-right: 10px;" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</span> ' \
                     f'<span style="margin-right: 50px;">{system_language_main} not in {location_data["languages"]}</span>'
             else:
                 response += f'<br><h6 style="display: inline; margin-right: 10px;" class="badge bg-success text-white">System contain Server Languages:&nbsp;</h6> ' \
                     f'<span style="margin-right: 50px;">{system_language_main} and {location_data["languages"]}</span>'
         else:
-            response += f'<br><h6 style="display: inline; margin-right: 10px;">System and Server Languages:&nbsp;</h6> ' \
-                f'<span style="margin-right: 50px;" class="badge bg-danger text-white">IP config error</span>'
+            response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white">IP config error</span>'
 
         response += f'<br><h6 style="display: inline; margin-right: 10px;" class="">System and Server Time:&nbsp;</h6>'
         if 'utc_offset' in location_data:
@@ -328,9 +330,12 @@ class DataJs(View):
         else:
             response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No </span>'
 
-        for result in compare_results:
-            response += f'<br><h6 style="display: inline; margin-right: 10px;">Compare:&nbsp;</h6> ' \
-                f'<span style="margin-right: 50px;"> {result} </span>'
+        response += f'<br><h6 style="display: inline; margin-right: 10px;">Moy Ultimate Visit Analyzer:&nbsp;</h6>'
+
+        if compare_results is not None:
+            response += f'<span style="margin-right: 50px;"> Maybe you always be there at {compare_results} </span>'
+        else:
+            response += f'<span style="margin-right: 50px;"> cant find visit date </span>'
 
         if test_hash_visit is None or fingerprint_visit is None or ip_address_visit is None:
             spec_data = {'test_hash': test_hash, 'fingerprint': fingerprint}
