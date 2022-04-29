@@ -261,7 +261,7 @@ class DataJs(View):
             if system_language_main.lower() not in location_data['languages'].lower() and \
                     all(lang not in system_language_main.lower() for lang in location_data['languages'].lower()):
 
-                response += f'<span> style="display: inline; margin-right: 10px;" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</span> ' \
+                response += f'<span style="display: inline; margin-right: 10px;" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</span> ' \
                     f'<span style="margin-right: 50px;">{system_language_main} not in {location_data["languages"]}</span>'
             else:
                 response += f'<span style="display: inline; margin-right: 10px;" class="badge bg-success text-white">System contain Server Languages:&nbsp;</span> ' \
