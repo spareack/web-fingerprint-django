@@ -95,17 +95,13 @@ def parse_user_agent(user_agent):
 def get_p0f_info(ip_adress):
     data = None
     p0f = P0f("p0f.sock")
-    # point this to socket defined with "-s" argument.
     try:
         data = p0f.get_info(ip_adress)
     except P0fException as e:
-        # Invalid query was sent to p0f. Maybe the API has changed?
         print(e)
     except KeyError as e:
-        # No data is available for this IP address.
         print(e)
     except ValueError as e:
-        # p0f returned invalid constant values. Maybe the API has changed?
         print(e)
 
     if data:
@@ -268,7 +264,7 @@ class DataJs(View):
                 response += f'<span> style="display: inline; margin-right: 10px;" class="badge bg-danger text-white">System and Server Languages are different:&nbsp;</span> ' \
                     f'<span style="margin-right: 50px;">{system_language_main} not in {location_data["languages"]}</span>'
             else:
-                response += f'<br><h6 style="display: inline; margin-right: 10px;" class="badge bg-success text-white">System contain Server Languages:&nbsp;</h6> ' \
+                response += f'<span style="display: inline; margin-right: 10px;" class="badge bg-success text-white">System contain Server Languages:&nbsp;</span> ' \
                     f'<span style="margin-right: 50px;">{system_language_main} and {location_data["languages"]}</span>'
         else:
             response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white">IP config error</span>'
