@@ -3,6 +3,7 @@ certifi==2021.10.8
 charset-normalizer==2.0.12
 Django==3.2.13
 django-templates==0.0.13
+gunicorn==20.1.0
 idna==3.3
 p0f==1.0.0
 pytz==2022.1
