@@ -17,6 +17,8 @@ import requests
 import json
 import math
 import datetime
+import socket
+import threading
 
 
 def get_ip_address(data):
@@ -142,6 +144,62 @@ def is_tor_ip(ip):
     with open(conf_settings.TOR_IPS_PATH) as file:
         all_apis = file.read()
         return ip in all_apis
+
+
+response = dict()
+
+def is_port_open(host, port, port_header):
+    global response
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.settimeout(0.2)
+        s.connect((host, port))
+    except:
+        response[port_header] = port
+        print(port, 'closed or timeout')
+        pass
+    else:
+        print(port, 'open')
+
+
+def start_proxy_port_scan(host):
+    global response
+    response = dict()
+    proxy_ports = {'Unknown80': '80',
+                   'hosts2-ns': '81',
+                   'Unknown8000': '8000',
+                   'HTTP CONNECT-прокси': '8080',
+                   'blackice-icecap': '8081',
+                   'SOCKS-прокси': '1080',
+                   'squid, WinGate, WinRoute, etc': '3128',
+                   'Unknown6588': '6588'}
+
+    all_threads = []
+    for port_header in proxy_ports:
+        port = proxy_ports.get(port_header)
+        thread = threading.Thread(target=is_port_open, args=(host, port, port_header)).start()
+        all_threads.append(thread)
+
+    for thread in all_threads:
+        thread.join()
+
+    return
+
+
+def get_mtu(ip_address):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    hostName = ip_address
+    Port = 9999
+    s.connect((hostName, Port))
+    s.setsockopt(socket.IPPROTO_IP, socket.IP_MTU_DISCOVER, socket.IP_PMTUDISC_DO)
+    try:
+        s.send(b'#' * 1473)
+    except socket.error:
+        print('The message did not make it')
+        option = getattr(socket, 'IP_MTU', 14)
+        print('MTU:', s.getsockopt(socket.IPPROTO_IP, option))
+    else:
+        print('The big message was sent! Your network supports really big packets!')
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -329,7 +387,7 @@ class DataJs(View):
         response += f'<br><h6 style="display: inline; margin-right: 10px;">My Ultimate Visit Analyzer:&nbsp;</h6>'
 
         if compare_results is not None:
-            response += f'<span style="margin-right: 50px;"> Maybe you always be there at {compare_results} </span>'
+            response += f'<span style="margin-right: 50px;"> Maybe you be there at {compare_results} </span>'
         else:
             response += f'<span style="margin-right: 50px;"> cant find visit date </span>'
 
@@ -342,11 +400,5 @@ class DataJs(View):
         return response
 
     def post(self, request):
-
         response = self.get_main_sum(request)
-
-
         return HttpResponse(response)
-
-
-
