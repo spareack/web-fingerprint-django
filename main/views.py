@@ -118,12 +118,6 @@ class HomeView(View):
         ip_address = get_ip_address(request.META)
         params = {key: request.META.get(key) for key in request.META if not key.startswith('wsgi.')}
 
-        # check_user = User.objects.filter(IP=ip_address)
-        # if check_user.exists():
-        #     check_user.update(headers=params)
-        # else:
-        #     User.objects.create(IP=ip_address, headers=params)
-
         location_data = get_location_data(ip_address)
         proxy_info = get_proxy_info(ip_address)
         user_agent_info = parse_user_agent(request.META.get('HTTP_USER_AGENT'))
@@ -134,8 +128,7 @@ class HomeView(View):
                    'location_data': location_data,
                    'user_agent_info': user_agent_info,
                    'proxy_info': proxy_info,
-                   'local': 'true' if 'error' in location_data and location_data['error'] else 'false'
-                   }
+                   'local': 'true' if 'error' in location_data and location_data['error'] else 'false'}
 
         return render(request, self.template_name, context)
 
@@ -146,16 +139,16 @@ def is_tor_ip(ip):
         return ip in all_apis
 
 
-response = dict()
+proxy_port_response = dict()
 
 def is_port_open(host, port, port_header):
-    global response
+    global proxy_port_response
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s.settimeout(0.2)
         s.connect((host, port))
     except:
-        response[port_header] = port
+        proxy_port_response[port_header] = port
         print(port, 'closed or timeout')
         pass
     else:
@@ -163,8 +156,8 @@ def is_port_open(host, port, port_header):
 
 
 def start_proxy_port_scan(host):
-    global response
-    response = dict()
+    global proxy_port_response
+    proxy_port_response = dict()
     proxy_ports = {'Unknown80': '80',
                    'hosts2-ns': '81',
                    'Unknown8000': '8000',
@@ -183,7 +176,7 @@ def start_proxy_port_scan(host):
     for thread in all_threads:
         thread.join()
 
-    return
+    return proxy_port_response
 
 
 def get_mtu(ip_address):
@@ -270,7 +263,7 @@ class DataJs(View):
                     return user.datetime.strftime("%Y/%m/%d %H:%M:%S")
         return None
 
-    def get_main_sum(self, request):
+    def get_analyze_response(self, request):
 
         headers = {key: request.META.get(key) for key in request.META if 'wsgi' not in key.lower() and type(request.META[key]) in [str, int, bool]}
         js_data = json.loads(request.body)
@@ -376,7 +369,7 @@ class DataJs(View):
                 if user_agent_info.get("generic"):
                     response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Mobile Tor Browser {user_agent_info.get("mobile_family")}</span>'
                 else:
-                    response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No {user_agent_info.get("mobile_family")}</span>'
+                    response += f'<span style="margin-right: 50px;" class="badge bg-success text-white"> No, model {user_agent_info.get("mobile_family")}</span>'
             elif user_agent_info.get('browser') == 'Mozilla':
                 response += f'<span style="margin-right: 50px;" class="badge bg-danger text-white"> Yes (screen test + browser family) </span>'
             else:
@@ -400,5 +393,5 @@ class DataJs(View):
         return response
 
     def post(self, request):
-        response = self.get_main_sum(request)
+        response = self.get_analyze_response(request)
         return HttpResponse(response)
